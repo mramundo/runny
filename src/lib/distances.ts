@@ -2,45 +2,27 @@ import type { Lang } from './types'
 
 export type DistancePreset = {
   km: number
-  label: Record<Lang, string>
+  /** What the session is, in one or two words */
   note: Record<Lang, string>
 }
 
 /**
- * The distances that actually show up in half and full marathon blocks.
- * Anything longer than 42.2 is a personal problem, not a preset.
+ * The distances a half or full marathon block is actually built from, not
+ * just the round numbers. Each one is a session a runner recognises.
  */
 export const DISTANCES: DistancePreset[] = [
-  {
-    km: 5,
-    label: { en: '5K', it: '5K' },
-    note: { en: 'Tempo & intervals', it: 'Ritmo e ripetute' },
-  },
-  {
-    km: 10,
-    label: { en: '10K', it: '10K' },
-    note: { en: 'Midweek staple', it: 'Il medio infrasettimanale' },
-  },
-  {
-    km: 15,
-    label: { en: '15K', it: '15K' },
-    note: { en: 'Half-build long run', it: 'Lungo da mezza' },
-  },
-  {
-    km: 21.1,
-    label: { en: 'Half', it: 'Mezza' },
-    note: { en: 'Race rehearsal', it: 'Prova gara' },
-  },
-  {
-    km: 30,
-    label: { en: '30K', it: '30K' },
-    note: { en: 'Marathon key session', it: 'Il lungo chiave' },
-  },
-  {
-    km: 42.2,
-    label: { en: 'Marathon', it: 'Maratona' },
-    note: { en: 'You already know', it: 'Lo sai già' },
-  },
+  { km: 5, note: { en: 'Intervals', it: 'Ripetute' } },
+  { km: 8, note: { en: 'Easy run', it: 'Fondo lento' } },
+  { km: 10, note: { en: 'Steady', it: 'Medio' } },
+  { km: 12, note: { en: 'Midweek long', it: 'Lungo infrasettimanale' } },
+  { km: 16, note: { en: 'Half long run', it: 'Lungo da mezza' } },
+  { km: 18, note: { en: 'Progression', it: 'Progressivo' } },
+  { km: 21.1, note: { en: 'Half marathon', it: 'Mezza maratona' } },
+  { km: 24, note: { en: 'Easy long', it: 'Lungo lento' } },
+  { km: 28, note: { en: 'Marathon long', it: 'Lungo da maratona' } },
+  { km: 32, note: { en: 'The key session', it: 'Il lungo chiave' } },
+  { km: 35, note: { en: 'Dress rehearsal', it: 'Prova generale' } },
+  { km: 42.2, note: { en: 'Marathon', it: 'Maratona' } },
 ]
 
 export const DEFAULT_PACE = 6

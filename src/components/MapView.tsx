@@ -85,15 +85,14 @@ export function MapView({ plan, ghosts, attribution, ariaLabel, className }: Pro
       return
     }
 
-    // A dark casing keeps the line readable over pale streets and parks.
-    L.polyline(plan.points, { color: '#07080a', weight: 9, opacity: 0.85, lineCap: 'round', lineJoin: 'round' }).addTo(group)
+    // A dark casing keeps the route readable over pale streets and parks.
+    // Solid, not dashed or animated: a moving line hides where it actually goes.
+    L.polyline(plan.points, { color: '#07080a', weight: 9, opacity: 0.9, lineCap: 'round', lineJoin: 'round' }).addTo(group)
     L.polyline(plan.points, {
       color: '#d8ff36',
       weight: 4,
       lineCap: 'round',
       lineJoin: 'round',
-      dashArray: '22 12',
-      className: 'route-line',
     }).addTo(group)
 
     const first = plan.points[0]

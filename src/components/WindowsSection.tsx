@@ -37,7 +37,7 @@ export function WindowsSection({
   const rest = [...others].sort((a, b) => a.startT - b.startT)
 
   return (
-    <section id="windows" className="panel tick p-5 sm:p-7">
+    <section id="windows" className="panel tick">
       <SectionHead
         kicker={strings.windows.kicker}
         title={strings.windows.title}
@@ -59,8 +59,9 @@ export function WindowsSection({
 
       <div className="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-1">
         <p className="clip max-w-xl text-[0.95rem] leading-relaxed text-muted">{strings.windows.lead}</p>
-        <p className="label whitespace-nowrap">
-          {strings.windows.windowLength} · {duration(windowSeconds, lang)}
+        <p className="flex items-baseline gap-1.5 whitespace-nowrap">
+          <span className="label">{strings.windows.windowLength}</span>
+          <span className="num text-sm">{duration(windowSeconds, lang)}</span>
         </p>
       </div>
 

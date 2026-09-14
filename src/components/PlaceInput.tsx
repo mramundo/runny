@@ -10,6 +10,9 @@ type Props = {
   lang: Lang
   near: LatLon | null
   accent: 'volt' | 'ice'
+  /** When the surrounding heading already names the field, keep the label for
+   *  screen readers only instead of repeating the word on screen. */
+  hideLabel?: boolean
   disabled?: boolean
   onError?: (message: string) => void
   strings: { searching: string; noResults: string; clear: string }
@@ -29,6 +32,7 @@ export function PlaceInput({
   lang,
   near,
   accent,
+  hideLabel,
   disabled,
   onError,
   strings,
@@ -113,14 +117,16 @@ export function PlaceInput({
 
   return (
     <div className="relative min-w-0" ref={box}>
-      <label className="label flex items-center gap-2">
-        <span
-          className={`inline-block h-1.5 w-1.5 rounded-full ${accent === 'volt' ? 'bg-volt' : 'bg-ice'}`}
-        />
+      <label className={hideLabel ? 'sr-only' : 'label flex items-center gap-2'}>
+        {!hideLabel && (
+          <span
+            className={`inline-block h-1.5 w-1.5 rounded-full ${accent === 'volt' ? 'bg-volt' : 'bg-ice'}`}
+          />
+        )}
         {label}
       </label>
 
-      <div className="relative mt-1">
+      <div className={hideLabel ? 'relative' : 'relative mt-1'}>
         <input
           className="field"
           type="text"
@@ -166,7 +172,7 @@ export function PlaceInput({
         <ul
           id={listId}
           role="listbox"
-          className="panel-raised absolute z-30 mt-1 max-h-72 w-full overflow-auto"
+          className="absolute z-30 mt-1 max-h-72 w-full overflow-auto rounded-[5px] border border-line bg-raised"
         >
           {busy && results.length === 0 && <li className="label px-3 py-3">{strings.searching}…</li>}
           {!busy && results.length === 0 && <li className="label px-3 py-3">{strings.noResults}</li>}

@@ -21,15 +21,6 @@ function endClock(endIso: string): string {
   return `${String(h).padStart(2, '0')}:00`
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="min-w-0">
-      <p className="label clip text-[0.58rem]">{label}</p>
-      <p className="num mt-1 text-base leading-none">{value}</p>
-    </div>
-  )
-}
-
 export function WindowCard({ window: w, strings, lang, todayIso, featured }: Props) {
   const band = bandOf(w.score)
   const day = dayLabel(w.startIso, todayIso, lang, {
@@ -37,8 +28,18 @@ export function WindowCard({ window: w, strings, lang, todayIso, featured }: Pro
     tomorrow: strings.windows.tomorrow,
   })
 
+  // Label and value stay on one line each: the pairs wrap as whole units, so a
+  // long word like "Percepita" can never break across two rows.
+  const metrics = [
+    { label: strings.windows.feelsLike, value: `${Math.round(w.apparent)}°` },
+    { label: strings.windows.humidityLabel, value: `${Math.round(w.humidity)}%` },
+    { label: strings.windows.rainChance, value: `${Math.round(w.precipProb)}%` },
+    { label: strings.windows.windLabel, value: `${Math.round(w.wind)} ${strings.units.kmh}` },
+    { label: strings.windows.uvLabel, value: `${Math.round(w.uv)}` },
+  ]
+
   return (
-    <article className={`animate-rise min-w-0 ${featured ? 'panel-raised p-5 sm:p-6' : 'panel-flat p-4'}`}>
+    <article className={`tile animate-rise min-w-0 ${featured ? 'p-5 sm:p-6' : ''}`}>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <p className="label">{day}</p>
         <p className="label" style={{ color: BAND_HEX[band] }}>
@@ -52,7 +53,7 @@ export function WindowCard({ window: w, strings, lang, todayIso, featured }: Pro
         {endClock(w.endIso)}
       </p>
 
-      <p className="clip mt-2 flex items-center gap-2 text-sm text-muted">
+      <p className="mt-2 flex items-center gap-2 text-sm text-muted">
         <WeatherGlyph code={w.weatherCode} isDay={w.isDay} className="h-5 w-5 shrink-0" />
         <span className="truncate">{strings.wmo[w.weatherCode] ?? ''}</span>
       </p>
@@ -70,13 +71,14 @@ export function WindowCard({ window: w, strings, lang, todayIso, featured }: Pro
         <p className="clip mt-4 text-lg leading-snug font-semibold sm:text-xl">{strings.verdicts[band]}</p>
       )}
 
-      <div className="hairline mt-4 grid grid-cols-3 gap-x-4 gap-y-3 pt-4 sm:grid-cols-5">
-        <Metric label={strings.windows.feelsLike} value={`${Math.round(w.apparent)}°`} />
-        <Metric label={strings.windows.humidityLabel} value={`${Math.round(w.humidity)}%`} />
-        <Metric label={strings.windows.rainChance} value={`${Math.round(w.precipProb)}%`} />
-        <Metric label={strings.windows.windLabel} value={`${Math.round(w.wind)}`} />
-        <Metric label={strings.windows.uvLabel} value={`${Math.round(w.uv)}`} />
-      </div>
+      <dl className="hairline mt-4 flex flex-wrap gap-x-5 gap-y-2 pt-4">
+        {metrics.map((m) => (
+          <div key={m.label} className="flex items-baseline gap-1.5 whitespace-nowrap">
+            <dt className="label text-[0.58rem]">{m.label}</dt>
+            <dd className="num text-sm">{m.value}</dd>
+          </div>
+        ))}
+      </dl>
     </article>
   )
 }

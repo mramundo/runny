@@ -1,6 +1,6 @@
 # runny
 
-**Every run has a right hour.** Runny reads the air over the exact line you intend to run — every kilometre of it, hour by hour — and marks the windows worth lacing up for.
+**Every run has a right hour.** Runny checks the forecast along the whole route you have in mind, hour by hour, and tells you which slots are actually worth going out for.
 
 Live: **https://mramundo.github.io/runny/**
 
@@ -10,11 +10,11 @@ The name is the joke: you use it so you *don't* end up runny.
 
 ## What it does
 
-1. **You give it a route.** Type a start and a finish, or tap *Locate me*. Leave *Finish where I start* on and Runny closes the line into a loop instead.
-2. **Or you give it a distance.** Pick 5K, 10K, 15K, Half, 30K or Marathon and Runny generates three real running routes of roughly that length, fanned out in different directions from your start.
-3. **It samples the forecast along the line.** Up to eight points on the polyline, averaged hour by hour — a 15 km run can leave town, climb 200 m and cross a river, and the weather at the end is not the weather at the start.
+1. **You set a starting point**, by typing it or by sharing your location. Everything else is built from it.
+2. **You pick how the run is shaped.** Either come back to the start — choose one of twelve training distances and Runny proposes three routes of that length heading different ways — or finish somewhere else, and Runny works out the route between the two points.
+3. **It samples the forecast along the route.** Up to eight points on the polyline, averaged hour by hour — a 15 km run can leave town, climb 200 m and cross a river, and the weather at the end is not the weather at the start.
 4. **It scores every hour** and shows the windows long enough to hold the whole run at your pace, ranked by how little the air will cost you.
-5. **It draws the line on a map** so you know exactly where you are going.
+5. **It draws the route on a map** so you know exactly where you are going.
 
 ## The Runny Score
 
@@ -30,13 +30,13 @@ A 0–100 number per hour. Heat stress sets the ceiling; everything else chips a
 
 Temperature and dew point are blended with **the worse of the pair carrying most of the weight**, so a cool-but-soupy morning and a hot-but-dry afternoon are both correctly called hard. Rain, wind and UV act as multipliers rather than points, because they can spoil a run but never make one pleasant. Thunderstorms, heavy rain, extreme apparent heat, gales and UV ≥ 10 cap the score outright.
 
-Bands: **Prime** ≥ 82 · **Strong** ≥ 66 · **Workable** ≥ 48 · **Rough** ≥ 30 · **Stay in** below.
+Bands: **Ideal** ≥ 82 · **Good** ≥ 66 · **Workable** ≥ 48 · **Hard** ≥ 30 · **Better not** below.
 
 ## Suggested loops
 
 Pick a distance and Runny drops four waypoints on a circle around your start, routes a pedestrian path through them, measures the real distance, then resizes the circle and tries again — up to three attempts — until the loop lands within 10% of the target. Three loops are built in different directions so you get a real choice. Every metre follows ways you can genuinely run.
 
-The preset distances are the staples of half and full marathon blocks: 5 and 10 km for tempo and intervals, 15 and 21.1 km for the long runs of a half build, 30 km as the classic marathon rehearsal, 42.2 km because someone always asks.
+The twelve presets are the sessions a half or full marathon block is really made of — 5, 8, 10, 12, 16, 18, 21.1, 24, 28, 32, 35 and 42.2 km — from intervals through the everyday runs and the long work of a half, up to a marathon build and the two race distances themselves.
 
 ## Languages
 

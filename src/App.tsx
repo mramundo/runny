@@ -5,9 +5,9 @@ import { Header } from './components/Header'
 import { Hero } from './components/Hero'
 import { Lanes } from './components/Lanes'
 import { LoadingRunner } from './components/LoadingRunner'
-import { Planner } from './components/Planner'
 import { RouteCard } from './components/RouteCard'
-import { Suggestions } from './components/Suggestions'
+import { RunSetup } from './components/RunSetup'
+import { StartCard } from './components/StartCard'
 import { WindowsSection } from './components/WindowsSection'
 import { DEFAULT_PACE } from './lib/distances'
 import {
@@ -27,7 +27,6 @@ import type { AppError, Forecast, Lang, Place, RoutePlan, Suggestion } from './l
 
 const DAY_START = 5
 const DAY_END = 22
-const DEFAULT_LOOP_KM = 10
 const STATE_KEY = 'runny:last'
 
 type View = 'planner' | 'faq'
@@ -86,14 +85,14 @@ export default function App() {
 
   const strings = t(lang)
   const resultsRef = useRef<HTMLDivElement>(null)
-  const plannerRef = useRef<HTMLDivElement>(null)
+  const setupRef = useRef<HTMLDivElement>(null)
   const jobs = useRef<AbortController | null>(null)
 
   /* ---------- language ---------- */
 
   useEffect(() => {
     document.documentElement.lang = lang
-    document.title = lang === 'it' ? 'Runny — trova la tua ora' : 'Runny — find your hour'
+    document.title = lang === 'it' ? 'Runny — l’ora giusta per correre' : 'Runny — the right hour to run'
   }, [lang])
 
   useEffect(() => {
@@ -156,6 +155,7 @@ export default function App() {
       setStart(place)
       setSuggestions([])
       setSelectedKm(null)
+      setSuggestFailed(false)
       resetPlan()
     },
     [resetPlan],
@@ -174,7 +174,7 @@ export default function App() {
     setError(null)
     try {
       const at = await currentPosition()
-      const place = await reverseGeocode(at, lang, strings.planner.yourLocation)
+      const place = await reverseGeocode(at, lang, strings.start.yourLocation)
       changeStart(place)
     } catch (err) {
       const kind = err as GeoFailure
@@ -192,7 +192,7 @@ export default function App() {
     }
   }, [changeStart, lang, strings])
 
-  /** Route + elevation + forecast, as one job that can be cancelled wholesale. */
+  /** Elevation + forecast for a route, as one job that can be cancelled whole. */
   const loadForecast = useCallback(
     async (basePlan: RoutePlan, suggestionId: string | null) => {
       jobs.current?.abort()
@@ -225,35 +225,18 @@ export default function App() {
     [strings],
   )
 
+  /** Only the finish-elsewhere path needs a submit: a loop is chosen by card. */
   const submit = useCallback(async () => {
-    if (!start) return
+    if (!start || !end) return
     setError(null)
 
-    // A route already chosen from the suggestions only needs its forecast.
-    if (plan) {
-      await loadForecast(plan, activeSuggestion)
+    if (Math.abs(end.lat - start.lat) < 1e-5 && Math.abs(end.lon - start.lon) < 1e-5) {
+      setError({ kind: 'route', message: strings.errors.routeSame })
       return
     }
 
     setWorking(true)
     try {
-      if (loop) {
-        const built = await buildSuggestions(start, selectedKm ?? DEFAULT_LOOP_KM, true)
-        if (built.length === 0) {
-          setError({ kind: 'route', message: strings.suggest.failed })
-          return
-        }
-        setSuggestions(built)
-        setSelectedKm(selectedKm ?? DEFAULT_LOOP_KM)
-        await loadForecast(built[0], built[0].id)
-        return
-      }
-
-      if (!end) return
-      if (Math.abs(end.lat - start.lat) < 1e-5 && Math.abs(end.lon - start.lon) < 1e-5) {
-        setError({ kind: 'route', message: strings.errors.routeSame })
-        return
-      }
       const routed = await routeBetween(start, end)
       await loadForecast(routed, null)
     } catch (err) {
@@ -261,7 +244,7 @@ export default function App() {
     } finally {
       setWorking(false)
     }
-  }, [activeSuggestion, end, loadForecast, loop, plan, selectedKm, start, strings])
+  }, [end, loadForecast, start, strings])
 
   const pickDistance = useCallback(
     async (targetKm: number) => {
@@ -286,10 +269,20 @@ export default function App() {
 
   const pickSuggestion = useCallback(
     (s: Suggestion) => {
-      if (!loop) setEnd(s.end)
       void loadForecast(s, s.id)
     },
-    [loadForecast, loop],
+    [loadForecast],
+  )
+
+  const changeLoop = useCallback(
+    (next: boolean) => {
+      setLoop(next)
+      setSuggestions([])
+      setSelectedKm(null)
+      setSuggestFailed(false)
+      resetPlan()
+    },
+    [resetPlan],
   )
 
   /* ---------- derived ---------- */
@@ -341,14 +334,14 @@ export default function App() {
           <>
             <Hero
               strings={strings}
-              onStart={() => plannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              onStart={() => setupRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
               onFaq={() => goView('faq')}
             />
 
             {error && (
               <div
                 role="alert"
-                className="mb-5 flex flex-wrap items-start justify-between gap-3 border-l-2 border-flare bg-pit px-4 py-3"
+                className="mb-4 flex flex-wrap items-start justify-between gap-3 border-l-2 border-flare bg-panel px-4 py-3"
               >
                 <p className="clip text-sm font-semibold">{error.message}</p>
                 <button
@@ -362,46 +355,43 @@ export default function App() {
               </div>
             )}
 
-            <div ref={plannerRef} className="space-y-4 scroll-mt-6">
-              <Planner
+            <div ref={setupRef} className="space-y-4 scroll-mt-6">
+              <StartCard
                 strings={strings}
                 lang={lang}
                 start={start}
-                end={end}
                 onStart={changeStart}
-                onEnd={changeEnd}
-                loop={loop}
-                onLoop={(v) => {
-                  setLoop(v)
-                  setSuggestions([])
-                  resetPlan()
-                }}
-                pace={pace}
-                onPace={setPace}
                 onGps={useGps}
                 gpsBusy={gpsBusy}
+                onSearchError={() => setError({ kind: 'search', message: strings.errors.search })}
+              />
+
+              <RunSetup
+                strings={strings}
+                lang={lang}
+                hasStart={Boolean(start)}
+                start={start}
+                end={end}
+                onEnd={changeEnd}
+                loop={loop}
+                onLoop={changeLoop}
+                pace={pace}
+                onPace={setPace}
+                selectedKm={selectedKm}
+                onSelectKm={pickDistance}
+                suggestions={suggestions}
+                suggestBusy={suggestBusy}
+                suggestFailed={suggestFailed}
+                activeId={activeSuggestion}
+                onPickSuggestion={pickSuggestion}
                 onSubmit={submit}
                 submitting={working}
                 onSearchError={() => setError({ kind: 'search', message: strings.errors.search })}
               />
-
-              <Suggestions
-                strings={strings}
-                lang={lang}
-                hasStart={Boolean(start)}
-                pace={pace}
-                selectedKm={selectedKm}
-                onSelectKm={pickDistance}
-                suggestions={suggestions}
-                busy={suggestBusy}
-                failed={suggestFailed}
-                activeId={activeSuggestion}
-                onPick={pickSuggestion}
-              />
             </div>
 
             <div ref={resultsRef} className="mt-4 space-y-4 scroll-mt-6">
-              {working && !forecast && <LoadingRunner message={strings.planner.submitting} />}
+              {working && !forecast && <LoadingRunner message={strings.mode.submitting} />}
 
               {plan && (
                 <RouteCard

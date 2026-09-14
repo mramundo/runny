@@ -107,26 +107,28 @@ body::before {
 }
 
 /* ============ Surfaces ============
-   One hairline, one dark fill, square-ish corners. No shadow anywhere:
-   depth comes from the value of the fill, not from a drop. */
+   Exactly two fills in the whole app: `panel` for a section, `tile` for a
+   box inside one. Both are flat — no gradients — so two panels never read as
+   different shades of the same thing. */
 
 .panel {
   position: relative;
-  background: linear-gradient(180deg, var(--color-panel), var(--color-pit));
+  background: var(--color-panel);
   border: 1px solid var(--color-line);
   border-radius: 6px;
+  padding: 1.5rem 1.25rem;
+}
+@media (min-width: 640px) {
+  .panel {
+    padding: 1.75rem;
+  }
 }
 
-.panel-flat {
-  background: var(--color-pit);
+.tile {
+  background: var(--color-raised);
   border: 1px solid var(--color-line-soft);
   border-radius: 5px;
-}
-
-.panel-raised {
-  background: var(--color-raised);
-  border: 1px solid var(--color-line);
-  border-radius: 5px;
+  padding: 1rem;
 }
 
 /* A short accent bar that hangs off the top-left of a section panel */
@@ -144,6 +146,41 @@ body::before {
 }
 .tick-flare::before {
   background: var(--color-flare);
+}
+
+/* Tabs: two halves of one control, the active one lit from below */
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--color-line);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.tab {
+  padding: 0.85rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  /* Transparent so an inactive tab is exactly the panel it sits on; only the
+     active one lifts to the same fill every inner box uses. */
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+.tab:hover {
+  color: var(--color-chalk);
+}
+.tab[aria-selected='true'] {
+  color: var(--color-chalk);
+  background: var(--color-raised);
+  border-bottom-color: var(--color-volt);
 }
 
 .hairline {
@@ -360,15 +397,6 @@ body::before {
 }
 .animate-rise {
   animation: rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes dash-run {
-  to {
-    stroke-dashoffset: -1000;
-  }
-}
-.route-line {
-  animation: dash-run 26s linear infinite;
 }
 
 @keyframes ticker {
