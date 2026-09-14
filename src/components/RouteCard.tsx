@@ -8,7 +8,6 @@ type Props = {
   strings: Strings
   lang: Lang
   plan: RoutePlan
-  ghosts?: [number, number][][]
   pace: number
   sampleCount: number | null
 }
@@ -16,8 +15,10 @@ type Props = {
 function Stat({ label, value, unit }: { label: string; value: string; unit?: string }) {
   return (
     <div className="tile min-w-0">
-      <p className="label clip">{label}</p>
-      <p className="num mt-2 text-2xl leading-none sm:text-[1.7rem]">
+      {/* Two lines are reserved whether the label needs them or not, so the
+          four figures always sit on the same baseline across the row. */}
+      <p className="label clip flex min-h-[2.4em] items-start leading-[1.2]">{label}</p>
+      <p className="num mt-1 text-2xl leading-none sm:text-[1.7rem]">
         {value}
         {unit && <span className="ml-1 font-mono text-[0.66rem] font-medium text-faint">{unit}</span>}
       </p>
@@ -25,7 +26,7 @@ function Stat({ label, value, unit }: { label: string; value: string; unit?: str
   )
 }
 
-export function RouteCard({ strings, lang, plan, ghosts, pace, sampleCount }: Props) {
+export function RouteCard({ strings, lang, plan, pace, sampleCount }: Props) {
   return (
     <section className="panel tick tick-flare">
       <SectionHead kicker={strings.route.kicker} title={strings.route.title} />
@@ -50,7 +51,6 @@ export function RouteCard({ strings, lang, plan, ghosts, pace, sampleCount }: Pr
       <div className="mt-5 overflow-hidden rounded-[5px] border border-line-soft">
         <MapView
           plan={plan}
-          ghosts={ghosts}
           attribution={strings.route.attribution}
           ariaLabel={strings.route.mapAria}
         />

@@ -38,31 +38,35 @@ export function WindowsSection({
 
   return (
     <section id="windows" className="panel tick">
-      <SectionHead
-        kicker={strings.windows.kicker}
-        title={strings.windows.title}
-        action={
-          <label className="flex cursor-pointer items-center gap-3">
-            <input
-              type="checkbox"
-              className="sr-only"
-              checked={includeNight}
-              onChange={(e) => onIncludeNight(e.target.checked)}
-            />
-            <span className="switch" data-on={includeNight} aria-hidden="true" />
-            <span className="label max-w-[11rem] text-left leading-tight">
-              {strings.windows.nightToggle}
-            </span>
-          </label>
-        }
-      />
+      <SectionHead kicker={strings.windows.kicker} title={strings.windows.title} />
 
-      <div className="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-1">
-        <p className="clip max-w-xl text-[0.95rem] leading-relaxed text-muted">{strings.windows.lead}</p>
-        <p className="flex items-baseline gap-1.5 whitespace-nowrap">
+      <p className="clip mt-4 max-w-2xl text-[0.95rem] leading-relaxed text-muted">
+        {strings.windows.lead}
+      </p>
+
+      {/* The two settings that shape everything below sit on one rule together,
+          rather than floating beside the heading. */}
+      <div className="hairline mt-5 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 pt-4">
+        <p className="flex items-baseline gap-2 whitespace-nowrap">
           <span className="label">{strings.windows.windowLength}</span>
-          <span className="num text-sm">{duration(windowSeconds, lang)}</span>
+          <span className="num text-base">{duration(windowSeconds, lang)}</span>
         </p>
+
+        <label className="flex cursor-pointer items-center gap-3">
+          <input
+            type="checkbox"
+            className="sr-only"
+            checked={includeNight}
+            onChange={(e) => onIncludeNight(e.target.checked)}
+          />
+          <span className="switch" data-on={includeNight} aria-hidden="true" />
+          <span className="min-w-0">
+            <span className="label block">{strings.windows.nightToggle}</span>
+            <span className="clip mt-0.5 block font-mono text-[0.62rem] text-faint">
+              {strings.windows.nightHint}
+            </span>
+          </span>
+        </label>
       </div>
 
       {!featured && <p className="mt-8 text-lg font-semibold">{strings.windows.none}</p>}
@@ -116,7 +120,6 @@ export function WindowsSection({
           <HourRail hours={forecast.hours} strings={strings} lang={lang} todayIso={todayIso} now={now} />
         </div>
       </div>
-      <p className="label mt-1">{strings.windows.nightHint}</p>
     </section>
   )
 }

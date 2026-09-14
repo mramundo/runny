@@ -3,7 +3,7 @@ import { bandOf } from '../lib/score'
 import { BAND_HEX } from '../lib/bands'
 import type { Lang, RunWindow } from '../lib/types'
 import type { Strings } from '../lib/i18n'
-import { IndexMeter } from './IndexMeter'
+import { IndexBar } from './IndexBar'
 import { WeatherGlyph } from './WeatherGlyph'
 
 type Props = {
@@ -21,8 +21,14 @@ function endClock(endIso: string): string {
   return `${String(h).padStart(2, '0')}:00`
 }
 
+/**
+ * One card answers three questions in order: when, how good, and why.
+ * The hour is the largest thing on it, the index sits opposite in the band's
+ * colour, and everything explaining the two lives below a rule.
+ */
 export function WindowCard({ window: w, strings, lang, todayIso, featured }: Props) {
   const band = bandOf(w.score)
+  const colour = BAND_HEX[band]
   const day = dayLabel(w.startIso, todayIso, lang, {
     today: strings.windows.today,
     tomorrow: strings.windows.tomorrow,
@@ -40,45 +46,61 @@ export function WindowCard({ window: w, strings, lang, todayIso, featured }: Pro
 
   return (
     <article className={`tile animate-rise min-w-0 ${featured ? 'p-5 sm:p-6' : ''}`}>
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-        <p className="label">{day}</p>
-        <p className="label" style={{ color: BAND_HEX[band] }}>
-          {strings.bands[band]}
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="label">{day}</p>
+          <p
+            className={`num mt-2 leading-none ${
+              featured ? 'text-[clamp(1.9rem,6.5vw,3rem)]' : 'text-2xl'
+            }`}
+          >
+            {clock(w.startIso)}
+            <span className="mx-1 text-faint">–</span>
+            {endClock(w.endIso)}
+          </p>
+        </div>
+
+        <div className="shrink-0 text-right">
+          <p
+            className={`num leading-none ${featured ? 'text-3xl sm:text-4xl' : 'text-xl'}`}
+            style={{ color: colour }}
+          >
+            {w.score}
+          </p>
+          <p className="label mt-2 whitespace-nowrap" style={{ color: colour }}>
+            {strings.bands[band]}
+          </p>
+        </div>
       </div>
 
-      <p className={`num mt-2 leading-none ${featured ? 'text-[clamp(2rem,7vw,3.2rem)]' : 'text-2xl'}`}>
-        {clock(w.startIso)}
-        <span className="mx-1 text-faint">–</span>
-        {endClock(w.endIso)}
-      </p>
-
-      <p className="mt-2 flex items-center gap-2 text-sm text-muted">
-        <WeatherGlyph code={w.weatherCode} isDay={w.isDay} className="h-5 w-5 shrink-0" />
-        <span className="truncate">{strings.wmo[w.weatherCode] ?? ''}</span>
-      </p>
-
-      <div className="mt-4">
-        <IndexMeter
-          score={w.score}
-          label={strings.windows.scoreLabel}
-          ariaLabel={strings.windows.scoreAria}
-          size={featured ? 'big' : 'inline'}
-        />
-      </div>
+      <IndexBar
+        score={w.score}
+        ariaLabel={strings.windows.scoreAria}
+        size={featured ? 'big' : 'inline'}
+        className="mt-4"
+      />
 
       {featured && (
-        <p className="clip mt-4 text-lg leading-snug font-semibold sm:text-xl">{strings.verdicts[band]}</p>
+        <p className="clip mt-5 text-lg leading-snug font-semibold sm:text-xl">
+          {strings.verdicts[band]}
+        </p>
       )}
 
-      <dl className="hairline mt-4 flex flex-wrap gap-x-5 gap-y-2 pt-4">
-        {metrics.map((m) => (
-          <div key={m.label} className="flex items-baseline gap-1.5 whitespace-nowrap">
-            <dt className="label text-[0.58rem]">{m.label}</dt>
-            <dd className="num text-sm">{m.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <div className="hairline mt-5 pt-4">
+        <p className="flex items-center gap-2 text-sm text-muted">
+          <WeatherGlyph code={w.weatherCode} isDay={w.isDay} className="h-5 w-5 shrink-0" />
+          <span className="truncate">{strings.wmo[w.weatherCode] ?? ''}</span>
+        </p>
+
+        <dl className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+          {metrics.map((m) => (
+            <div key={m.label} className="flex items-baseline gap-1.5 whitespace-nowrap">
+              <dt className="label text-[0.58rem]">{m.label}</dt>
+              <dd className="num text-sm">{m.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </article>
   )
 }

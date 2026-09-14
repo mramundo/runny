@@ -27,11 +27,8 @@ export function SuggestionList({ strings, lang, suggestions, pace, activeId, onP
               {km(s.meters, lang)}
               <span className="ml-1 font-mono text-xs font-medium text-faint">{strings.units.km}</span>
             </p>
-            <p className="mt-1 font-mono text-[0.62rem] text-faint">
-              {strings.suggest.targetNote} {s.targetKm} {strings.units.km}
-            </p>
 
-            <dl className="hairline mt-4 flex flex-wrap gap-x-5 gap-y-2 pt-3">
+            <dl className="hairline mt-4 flex flex-wrap gap-x-5 gap-y-2 pt-4">
               <div className="flex items-baseline gap-1.5 whitespace-nowrap">
                 <dt className="label text-[0.58rem]">{strings.route.duration}</dt>
                 <dd className="num text-sm">{duration(runSeconds(s.meters, pace), lang)}</dd>
@@ -44,13 +41,17 @@ export function SuggestionList({ strings, lang, suggestions, pace, activeId, onP
               </div>
             </dl>
 
-            <button
-              type="button"
-              onClick={() => onPick(s)}
-              className={`btn mt-4 w-full px-3 py-2.5 ${active ? 'btn-solid' : 'btn-line'}`}
-            >
-              {strings.suggest.pick}
-            </button>
+            {/* Pushed to the bottom so three cards of different text length
+                still line their buttons up. */}
+            <div className="mt-auto pt-4">
+              <button
+                type="button"
+                onClick={() => onPick(s)}
+                className={`btn w-full px-3 py-2.5 ${active ? 'btn-solid' : 'btn-line'}`}
+              >
+                {strings.suggest.pick}
+              </button>
+            </div>
           </article>
         )
       })}

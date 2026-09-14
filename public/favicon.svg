@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Runny">
-  <rect x="10" y="10" width="492" height="492" rx="106" fill="#C6F135" stroke="#12161C" stroke-width="20"/>
-  <g transform="translate(76 76) scale(5.625)" fill="none" stroke="#12161C" stroke-linecap="round" stroke-linejoin="round">
-    <g stroke-width="4" opacity="0.5">
+  <rect x="8" y="8" width="496" height="496" rx="112" fill="#0C0E11" stroke="#262D36" stroke-width="16"/>
+  <g transform="translate(76 76) scale(5.625)" fill="none" stroke="#D8FF36" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke-width="4" opacity="0.45">
       <path d="M4 20h9"/>
       <path d="M2 31h7"/>
       <path d="M6 42h8"/>
     </g>
     <g stroke-width="6">
-      <circle cx="44" cy="12.5" r="6.5" fill="#12161C" stroke="none"/>
+      <circle cx="44" cy="12.5" r="6.5" fill="#D8FF36" stroke="none"/>
       <path d="M40.5 22 30 33"/>
       <path d="M40 24.5 50 29.5 56.5 23"/>
       <path d="M35.5 27 26 23.5 20.5 29"/>

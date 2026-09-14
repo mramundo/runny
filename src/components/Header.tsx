@@ -13,8 +13,8 @@ type Props = {
 export function Header({ strings, lang, onLang, view, onView }: Props) {
   return (
     <header className="flex items-center justify-between gap-4 py-5">
-      <button type="button" className="group flex min-w-0 items-center gap-3" onClick={() => onView('planner')}>
-        <RunnerMark className="h-9 w-9 shrink-0 text-volt transition-transform group-hover:translate-x-0.5 sm:h-10 sm:w-10" />
+      <button type="button" className="flex min-w-0 items-center gap-3" onClick={() => onView('planner')}>
+        <RunnerMark className="h-9 w-9 shrink-0 text-volt sm:h-10 sm:w-10" />
         <span className="min-w-0 text-left">
           <span className="h-display block text-2xl text-chalk sm:text-[1.7rem]">runny</span>
           <span className="label block truncate">{strings.brandTag}</span>

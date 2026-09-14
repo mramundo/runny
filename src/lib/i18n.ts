@@ -70,7 +70,6 @@ const en = {
       w: 'Westbound',
       nw: 'North-west',
     },
-    targetNote: 'target',
   },
 
   route: {
@@ -306,7 +305,6 @@ const it: Dict = {
       w: 'Verso ovest',
       nw: 'Verso nord-ovest',
     },
-    targetNote: 'obiettivo',
   },
 
   route: {

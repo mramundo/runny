@@ -149,6 +149,88 @@ export function decodePolyline(encoded: string, precision = 6): [number, number]
   return out
 }
 
+/**
+ * Shifts a polyline sideways, to the right of travel, by a fixed distance.
+ * A route that runs up a street and back down it draws as one line on top of
+ * itself; offsetting each direction turns it into two parallel lines, which is
+ * the only way an out-and-back is readable on a map.
+ */
+export function offsetPolyline(points: [number, number][], meters: number): [number, number][] {
+  if (points.length < 2 || meters === 0) return points
+
+  const out: [number, number][] = []
+  for (let i = 0; i < points.length; i++) {
+    const here = { lat: points[i][0], lon: points[i][1] }
+    const prev = i > 0 ? { lat: points[i - 1][0], lon: points[i - 1][1] } : null
+    const next = i < points.length - 1 ? { lat: points[i + 1][0], lon: points[i + 1][1] } : null
+
+    // A vertex belongs to two segments; take the average heading so the shifted
+    // line turns corners instead of breaking apart at them.
+    const headings: number[] = []
+    if (prev) headings.push(bearing(prev, here))
+    if (next) headings.push(bearing(here, next))
+    const heading = averageAngle(headings)
+
+    const shifted = destination(here, (heading + 90) % 360, meters)
+    out.push([shifted.lat, shifted.lon])
+  }
+  return out
+}
+
+/** Mean of angles in degrees, taken through their unit vectors so 350 and 10 average to 0. */
+function averageAngle(degrees: number[]): number {
+  if (degrees.length === 0) return 0
+  if (degrees.length === 1) return degrees[0]
+  let x = 0
+  let y = 0
+  for (const d of degrees) {
+    x += Math.cos(toRad(d))
+    y += Math.sin(toRad(d))
+  }
+  return (toDeg(Math.atan2(y, x)) + 360) % 360
+}
+
+/**
+ * Evenly spaced points along a polyline with the heading at each one, for
+ * dropping direction arrows on the drawn route.
+ */
+export function arrowsAlong(
+  points: [number, number][],
+  count: number,
+): { at: [number, number]; heading: number }[] {
+  if (points.length < 2 || count < 1) return []
+
+  const cum: number[] = [0]
+  for (let i = 1; i < points.length; i++) {
+    cum.push(
+      cum[i - 1] +
+        haversine(
+          { lat: points[i - 1][0], lon: points[i - 1][1] },
+          { lat: points[i][0], lon: points[i][1] },
+        ),
+    )
+  }
+  const total = cum[cum.length - 1]
+  if (total === 0) return []
+
+  const out: { at: [number, number]; heading: number }[] = []
+  for (let k = 0; k < count; k++) {
+    // Offset by half a step so no arrow lands exactly on the start or finish dot.
+    const target = (total * (k + 0.5)) / count
+    let i = 1
+    while (i < cum.length - 1 && cum[i] < target) i++
+    const a = { lat: points[i - 1][0], lon: points[i - 1][1] }
+    const b = { lat: points[i][0], lon: points[i][1] }
+    const span = cum[i] - cum[i - 1]
+    const ratio = span > 0 ? (target - cum[i - 1]) / span : 0
+    out.push({
+      at: [a.lat + (b.lat - a.lat) * ratio, a.lon + (b.lon - a.lon) * ratio],
+      heading: bearing(a, b),
+    })
+  }
+  return out
+}
+
 /** Bounding box of a polyline as [[south, west], [north, east]]. */
 export function boundsOf(points: [number, number][]): [[number, number], [number, number]] {
   let s = 90

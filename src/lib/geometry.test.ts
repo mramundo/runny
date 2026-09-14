@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  arrowsAlong,
   ascentOf,
   bearing,
   boundsOf,
@@ -7,6 +8,7 @@ import {
   decodePolyline,
   destination,
   haversine,
+  offsetPolyline,
   polylineLength,
   samplePolyline,
 } from './geometry'
@@ -105,5 +107,67 @@ describe('boundsOf', () => {
       [-3, -1],
       [5, 8],
     ])
+  })
+})
+
+
+describe('offsetPolyline', () => {
+  // Due east, then back due west along the same street.
+  const east = destination(ROME, 90, 400)
+  const outAndBack: [number, number][] = [
+    [ROME.lat, ROME.lon],
+    [east.lat, east.lon],
+    [ROME.lat, ROME.lon],
+  ]
+
+  it('leaves a line alone when the offset is zero', () => {
+    expect(offsetPolyline(outAndBack, 0)).toEqual(outAndBack)
+  })
+
+  it('separates the two directions of an out-and-back', () => {
+    const shifted = offsetPolyline(outAndBack, 20)
+    // Outbound and inbound share a vertex in the original; after the shift the
+    // first and last points must sit on opposite sides of the street.
+    const gap = haversine(
+      { lat: shifted[0][0], lon: shifted[0][1] },
+      { lat: shifted[2][0], lon: shifted[2][1] },
+    )
+    expect(gap).toBeGreaterThan(30)
+  })
+
+  it('shifts a straight eastbound line to the south', () => {
+    const line: [number, number][] = [
+      [ROME.lat, ROME.lon],
+      [east.lat, east.lon],
+    ]
+    const shifted = offsetPolyline(line, 25)
+    expect(shifted[0][0]).toBeLessThan(ROME.lat)
+    expect(haversine({ lat: shifted[0][0], lon: shifted[0][1] }, ROME)).toBeCloseTo(25, 0)
+  })
+})
+
+describe('arrowsAlong', () => {
+  const line: [number, number][] = Array.from({ length: 11 }, (_, i) => {
+    const p = destination(ROME, 90, i * 100)
+    return [p.lat, p.lon] as [number, number]
+  })
+
+  it('places the requested number of arrows', () => {
+    expect(arrowsAlong(line, 4)).toHaveLength(4)
+  })
+
+  it('points them along the direction of travel', () => {
+    for (const a of arrowsAlong(line, 3)) {
+      expect(a.heading).toBeCloseTo(90, 0)
+    }
+  })
+
+  it('keeps them off both ends', () => {
+    const [first] = arrowsAlong(line, 4)
+    expect(haversine({ lat: first.at[0], lon: first.at[1] }, ROME)).toBeGreaterThan(50)
+  })
+
+  it('returns nothing for a degenerate line', () => {
+    expect(arrowsAlong([[1, 2]], 3)).toEqual([])
   })
 })

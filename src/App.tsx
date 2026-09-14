@@ -315,11 +315,6 @@ export default function App() {
     return (current ?? forecast.hours[0]).time
   }, [forecast, now])
 
-  const ghosts = useMemo(
-    () => suggestions.filter((s) => s.id !== activeSuggestion).map((s) => s.points),
-    [activeSuggestion, suggestions],
-  )
-
   return (
     <>
       <Lanes />
@@ -398,7 +393,6 @@ export default function App() {
                   strings={strings}
                   lang={lang}
                   plan={plan}
-                  ghosts={ghosts}
                   pace={pace}
                   sampleCount={forecast?.sampleCount ?? null}
                 />
