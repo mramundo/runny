@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 import L from 'leaflet'
-import { arrowsAlong, boundsOf, offsetPolyline } from '../lib/geometry'
+import { boundsOf, offsetPolyline } from '../lib/geometry'
 import type { RoutePlan } from '../lib/types'
 
 type Props = {
@@ -16,8 +16,6 @@ const TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 
 /** How far to the side of the road the route is drawn, in screen pixels. */
 const OFFSET_PX = 7
-/** Roughly one direction arrow per this many pixels of drawn route. */
-const PX_PER_ARROW = 115
 
 function dot(kind: 'start' | 'end') {
   return L.divIcon({
@@ -25,15 +23,6 @@ function dot(kind: 'start' | 'end') {
     html: `<div class="dot dot-${kind}"></div>`,
     iconSize: [12, 12],
     iconAnchor: [6, 6],
-  })
-}
-
-function arrow(heading: number) {
-  return L.divIcon({
-    className: '',
-    html: `<div class="arrow" style="transform:rotate(${heading.toFixed(1)}deg)"></div>`,
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
   })
 }
 
@@ -66,15 +55,8 @@ export function MapView({ plan, attribution, ariaLabel, className }: Props) {
     const mpp = metresPerPixel(m.getCenter().lat, m.getZoom())
     const line = offsetPolyline(plan.points, OFFSET_PX * mpp)
 
-    // Thick enough to carry the direction chevrons inside it.
-    L.polyline(line, { color: '#07080a', weight: 13, opacity: 0.92, lineCap: 'round', lineJoin: 'round' }).addTo(group)
-    L.polyline(line, { color: '#d8ff36', weight: 7, lineCap: 'round', lineJoin: 'round' }).addTo(group)
-
-    // Arrows say which way each of those parallel lines is going.
-    const arrowCount = Math.max(3, Math.min(20, Math.round(plan.meters / mpp / PX_PER_ARROW)))
-    for (const a of arrowsAlong(line, arrowCount)) {
-      L.marker(a.at, { icon: arrow(a.heading), keyboard: false, interactive: false }).addTo(group)
-    }
+    L.polyline(line, { color: '#07080a', weight: 12, opacity: 0.92, lineCap: 'round', lineJoin: 'round' }).addTo(group)
+    L.polyline(line, { color: '#d8ff36', weight: 6, lineCap: 'round', lineJoin: 'round' }).addTo(group)
 
     L.marker(line[0], { icon: dot('start'), keyboard: false, interactive: false }).addTo(group)
     if (plan.kind !== 'loop') {
@@ -82,13 +64,13 @@ export function MapView({ plan, attribution, ariaLabel, className }: Props) {
     }
   }, [plan])
 
-  /** Frame the route, then draw it: the offset and the arrow spacing both
-   *  depend on the zoom the fit settles on. */
+  /** Frame the route, then draw it: the sideways offset is measured in screen
+   *  pixels, so it depends on the zoom the fit settles on. */
   const fitAndDraw = useCallback(() => {
     const m = map.current
     if (!m) return
-    // Framed without animation so the new zoom is in effect by the next line:
-    // the sideways offset and the arrow spacing are both measured from it.
+    // Framed without animation so the new zoom is in effect by the next line,
+    // which measures the sideways offset from it.
     if (plan && plan.points.length > 1) {
       m.fitBounds(boundsOf(plan.points), { padding: [28, 28], animate: false })
     }
@@ -126,8 +108,8 @@ export function MapView({ plan, attribution, ariaLabel, className }: Props) {
     m.on('resize', onResize)
 
     // The container is laid out by CSS after mount and can change size later
-    // (a phone rotating, a panel reflowing). Until Leaflet is told, it fits
-    // routes to the wrong box and the arrows come out sparse.
+    // (a phone rotating, a panel reflowing). Until Leaflet is told, it keeps
+    // fitting routes to the wrong box.
     const observer = new ResizeObserver(() => m.invalidateSize())
     observer.observe(host.current)
 

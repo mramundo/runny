@@ -468,16 +468,6 @@ body::before {
   color: var(--color-faint) !important;
 }
 
-/* Direction arrows: an open chevron punched dark out of the volt line. Two
-   parallel lines on the same street then read as out and back, not as one
-   thick line. */
-.arrow {
-  width: 15px;
-  height: 15px;
-  background: var(--color-void);
-  clip-path: polygon(50% 12%, 93% 55%, 79% 70%, 50% 41%, 21% 70%, 7% 55%);
-}
-
 /* Endpoint markers: a ring, not a balloon */
 .dot {
   width: 100%;

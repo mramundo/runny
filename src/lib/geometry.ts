@@ -190,47 +190,6 @@ function averageAngle(degrees: number[]): number {
   return (toDeg(Math.atan2(y, x)) + 360) % 360
 }
 
-/**
- * Evenly spaced points along a polyline with the heading at each one, for
- * dropping direction arrows on the drawn route.
- */
-export function arrowsAlong(
-  points: [number, number][],
-  count: number,
-): { at: [number, number]; heading: number }[] {
-  if (points.length < 2 || count < 1) return []
-
-  const cum: number[] = [0]
-  for (let i = 1; i < points.length; i++) {
-    cum.push(
-      cum[i - 1] +
-        haversine(
-          { lat: points[i - 1][0], lon: points[i - 1][1] },
-          { lat: points[i][0], lon: points[i][1] },
-        ),
-    )
-  }
-  const total = cum[cum.length - 1]
-  if (total === 0) return []
-
-  const out: { at: [number, number]; heading: number }[] = []
-  for (let k = 0; k < count; k++) {
-    // Offset by half a step so no arrow lands exactly on the start or finish dot.
-    const target = (total * (k + 0.5)) / count
-    let i = 1
-    while (i < cum.length - 1 && cum[i] < target) i++
-    const a = { lat: points[i - 1][0], lon: points[i - 1][1] }
-    const b = { lat: points[i][0], lon: points[i][1] }
-    const span = cum[i] - cum[i - 1]
-    const ratio = span > 0 ? (target - cum[i - 1]) / span : 0
-    out.push({
-      at: [a.lat + (b.lat - a.lat) * ratio, a.lon + (b.lon - a.lon) * ratio],
-      heading: bearing(a, b),
-    })
-  }
-  return out
-}
-
 /** Bounding box of a polyline as [[south, west], [north, east]]. */
 export function boundsOf(points: [number, number][]): [[number, number], [number, number]] {
   let s = 90

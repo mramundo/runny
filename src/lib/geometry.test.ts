@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-  arrowsAlong,
   ascentOf,
   bearing,
   boundsOf,
@@ -143,31 +142,5 @@ describe('offsetPolyline', () => {
     const shifted = offsetPolyline(line, 25)
     expect(shifted[0][0]).toBeLessThan(ROME.lat)
     expect(haversine({ lat: shifted[0][0], lon: shifted[0][1] }, ROME)).toBeCloseTo(25, 0)
-  })
-})
-
-describe('arrowsAlong', () => {
-  const line: [number, number][] = Array.from({ length: 11 }, (_, i) => {
-    const p = destination(ROME, 90, i * 100)
-    return [p.lat, p.lon] as [number, number]
-  })
-
-  it('places the requested number of arrows', () => {
-    expect(arrowsAlong(line, 4)).toHaveLength(4)
-  })
-
-  it('points them along the direction of travel', () => {
-    for (const a of arrowsAlong(line, 3)) {
-      expect(a.heading).toBeCloseTo(90, 0)
-    }
-  })
-
-  it('keeps them off both ends', () => {
-    const [first] = arrowsAlong(line, 4)
-    expect(haversine({ lat: first.at[0], lon: first.at[1] }, ROME)).toBeGreaterThan(50)
-  })
-
-  it('returns nothing for a degenerate line', () => {
-    expect(arrowsAlong([[1, 2]], 3)).toEqual([])
   })
 })
