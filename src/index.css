@@ -372,6 +372,13 @@ body::before {
   animation: stride 0.7s ease-in-out infinite;
 }
 
+/* The hero divider's runner, on its way across and back. Transitioning `left`
+   rather than a transform keeps the travel measured against the rule it runs
+   along, whatever width that is. */
+.runner-dash {
+  transition: left 1.5s cubic-bezier(0.45, 0.02, 0.5, 1);
+}
+
 @keyframes blink {
   0%,
   100% {

@@ -1,5 +1,5 @@
 import type { Strings } from '../lib/i18n'
-import { RunnerMark } from './RunnerMark'
+import { RunnerDash } from './RunnerDash'
 
 type Props = { strings: Strings; onStart: () => void; onFaq: () => void }
 
@@ -28,10 +28,7 @@ export function Hero({ strings, onStart, onFaq }: Props) {
         </div>
       </div>
 
-      <div className="mt-12 flex items-center gap-3" aria-hidden="true">
-        <RunnerMark className="h-5 w-5 shrink-0 text-volt" trail={false} />
-        <span className="h-px flex-1 bg-line-soft" />
-      </div>
+      <RunnerDash className="mt-12" />
     </section>
   )
 }
