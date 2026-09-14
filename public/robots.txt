@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mramundo.github.io/runny/sitemap.xml
