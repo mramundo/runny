@@ -15,9 +15,14 @@ export function Header({ strings, lang, onLang, view, onView }: Props) {
     <header className="flex items-center justify-between gap-4 py-5">
       <button type="button" className="flex min-w-0 items-center gap-3" onClick={() => onView('planner')}>
         <RunnerMark className="h-9 w-9 shrink-0 text-volt sm:h-10 sm:w-10" />
+        {/* Wordmark and tagline are sized to stack into roughly a square
+            block: two short lines under the name, neither wider than it. */}
         <span className="min-w-0 text-left">
           <span className="h-display block text-2xl text-chalk sm:text-[1.7rem]">runny</span>
-          <span className="label block truncate">{strings.brandTag}</span>
+          <span className="label mt-1 block text-[0.55rem] leading-[1.45] tracking-[0.1em] max-[359px]:hidden">
+            <span className="block w-fit truncate">{strings.brandTag.a}</span>
+            <span className="block w-fit truncate">{strings.brandTag.b}</span>
+          </span>
         </span>
       </button>
 

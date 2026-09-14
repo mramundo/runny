@@ -8,7 +8,7 @@ import type { Lang } from './types'
 
 const en = {
   langName: 'English',
-  brandTag: 'the right hour to run',
+  brandTag: { a: 'the right', b: 'hour to run' },
 
   nav: {
     plan: 'Planner',
@@ -243,7 +243,7 @@ type Dict = typeof en
 
 const it: Dict = {
   langName: 'Italiano',
-  brandTag: 'l’ora giusta per correre',
+  brandTag: { a: 'l’ora giusta', b: 'per correre' },
 
   nav: {
     plan: 'Pianifica',
