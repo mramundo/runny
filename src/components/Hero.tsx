@@ -4,52 +4,48 @@ import { RunnerMark } from './RunnerMark'
 type Props = { strings: Strings; onStart: () => void; onFaq: () => void }
 
 export function Hero({ strings, onStart, onFaq }: Props) {
+  const stats = [
+    { value: strings.hero.statAValue, label: strings.hero.statA },
+    { value: strings.hero.statBValue, label: strings.hero.statB },
+    { value: strings.hero.statCValue, label: strings.hero.statC },
+  ]
+
   return (
-    <section className="relative py-6 sm:py-10">
-      <div className="grid items-center gap-8 md:grid-cols-[1.15fr_0.85fr]">
-        <div>
-          <h1 className="font-display text-[2.6rem] leading-[0.92] font-black tracking-tight sm:text-6xl lg:text-7xl">
-            {strings.hero.titleA}{' '}
-            <span className="squiggle squiggle-volt inline-block">{strings.hero.titleB}</span>
-          </h1>
+    <section className="py-10 sm:py-16">
+      <p className="label">{strings.hero.kicker}</p>
 
-          <p className="mt-6 max-w-xl text-base leading-relaxed font-semibold text-ink-soft sm:text-lg">
-            {strings.hero.lead}
-          </p>
+      <h1 className="h-display mt-5 text-[clamp(2.6rem,10vw,5.6rem)]">
+        <span className="block">{strings.hero.titleA}</span>
+        <span className="block text-volt">{strings.hero.titleB}</span>
+      </h1>
 
-          <div className="mt-7 flex flex-wrap gap-3">
-            <button type="button" onClick={onStart} className="btn-pop bg-volt-400 px-6 py-3 text-base sm:text-lg">
-              {strings.hero.cta}
-            </button>
-            <button type="button" onClick={onFaq} className="btn-pop bg-white px-6 py-3 text-base sm:text-lg">
-              {strings.hero.ghost}
-            </button>
-          </div>
+      <div className="mt-8 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+        <p className="clip max-w-2xl text-[1.05rem] leading-relaxed text-muted sm:text-lg">
+          {strings.hero.lead}
+        </p>
 
-          <ul className="mt-6 flex flex-wrap gap-2">
-            {[strings.hero.badge1, strings.hero.badge2, strings.hero.badge3].map((b, i) => (
-              <li
-                key={b}
-                className="chip bg-white px-3 py-1.5 text-xs"
-                style={{ transform: `rotate(${i === 1 ? 1.5 : -1.5}deg)` }}
-              >
-                {b}
-              </li>
-            ))}
-          </ul>
+        <div className="flex flex-wrap gap-3 md:flex-nowrap md:justify-end">
+          <button type="button" onClick={onStart} className="btn btn-solid px-6 py-3">
+            {strings.hero.cta}
+          </button>
+          <button type="button" onClick={onFaq} className="btn btn-line px-6 py-3">
+            {strings.hero.ghost}
+          </button>
         </div>
+      </div>
 
-        <div className="relative mx-auto w-full max-w-[320px]">
-          <div className="absolute -top-4 -left-3 z-10 rotate-[-8deg] rounded-[0.8rem] border-[3px] border-ink bg-cool-300 px-3 py-1.5 shadow-pop-xs">
-            <span className="font-display text-sm font-black tabular-nums">12° · UV 1</span>
+      <div className="hairline mt-10 grid grid-cols-3 gap-px bg-line-soft">
+        {stats.map((s) => (
+          <div key={s.label} className="bg-void px-1 pt-5 pb-1">
+            <p className="num text-3xl leading-none text-chalk sm:text-4xl">{s.value}</p>
+            <p className="label clip mt-2 leading-tight">{s.label}</p>
           </div>
-          <div className="absolute -right-2 bottom-6 z-10 rotate-[7deg] rounded-[0.8rem] border-[3px] border-ink bg-heat-400 px-3 py-1.5 shadow-pop-xs">
-            <span className="font-display text-sm font-black tabular-nums">31° · UV 9</span>
-          </div>
-          <div className="animate-float grid aspect-square place-items-center rounded-[2rem] border-4 border-ink bg-volt-400 shadow-pop-lg">
-            <RunnerMark className="h-[62%] w-[62%] text-ink" running />
-          </div>
-        </div>
+        ))}
+      </div>
+
+      <div className="mt-10 flex items-center gap-3 text-faint" aria-hidden="true">
+        <RunnerMark className="h-5 w-5 text-volt" trail={false} />
+        <span className="h-px flex-1 bg-line-soft" />
       </div>
     </section>
   )

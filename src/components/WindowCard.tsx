@@ -1,9 +1,9 @@
-import { BAND_BG } from '../lib/bands'
 import { clock, dayLabel } from '../lib/format'
 import { bandOf } from '../lib/score'
+import { BAND_HEX } from '../lib/bands'
 import type { Lang, RunWindow } from '../lib/types'
 import type { Strings } from '../lib/i18n'
-import { ScoreDial } from './ScoreDial'
+import { IndexMeter } from './IndexMeter'
 import { WeatherGlyph } from './WeatherGlyph'
 
 type Props = {
@@ -23,9 +23,9 @@ function endClock(endIso: string): string {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[0.8rem] border-[2.5px] border-ink bg-paper px-2.5 py-2 text-center">
-      <div className="text-[0.58rem] font-extrabold tracking-[0.1em] uppercase text-ink-soft">{label}</div>
-      <div className="font-display mt-0.5 text-base leading-none font-black tabular-nums">{value}</div>
+    <div className="min-w-0">
+      <p className="label clip text-[0.58rem]">{label}</p>
+      <p className="num mt-1 text-base leading-none">{value}</p>
     </div>
   )
 }
@@ -38,50 +38,39 @@ export function WindowCard({ window: w, strings, lang, todayIso, featured }: Pro
   })
 
   return (
-    <article
-      className={`animate-pop-in relative ${featured ? 'card p-5 sm:p-7' : 'card-sm p-4 sm:p-5'}`}
-    >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <span
-            className={`sticker ${BAND_BG[band]} px-3 py-1 text-[0.65rem]`}
-            style={{ ['--tilt' as string]: featured ? '-3deg' : '-2deg' }}
-          >
-            {strings.bands[band]}
-          </span>
-          <p className="font-display mt-3 text-xs font-black tracking-[0.14em] uppercase text-ink-soft">
-            {day}
-          </p>
-          <p
-            className={`font-display leading-none font-black tabular-nums ${
-              featured ? 'text-4xl sm:text-5xl' : 'text-3xl'
-            }`}
-          >
-            {clock(w.startIso)}
-            <span className="text-ink-soft">→</span>
-            {endClock(w.endIso)}
-          </p>
-          <p className="mt-2 flex items-center gap-2 text-sm font-bold text-ink-soft">
-            <WeatherGlyph code={w.weatherCode} isDay={w.isDay} className="h-6 w-6 shrink-0" />
-            {strings.wmo[w.weatherCode] ?? ''}
-          </p>
-        </div>
+    <article className={`animate-rise min-w-0 ${featured ? 'panel-raised p-5 sm:p-6' : 'panel-flat p-4'}`}>
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+        <p className="label">{day}</p>
+        <p className="label" style={{ color: BAND_HEX[band] }}>
+          {strings.bands[band]}
+        </p>
+      </div>
 
-        <ScoreDial
+      <p className={`num mt-2 leading-none ${featured ? 'text-[clamp(2rem,7vw,3.2rem)]' : 'text-2xl'}`}>
+        {clock(w.startIso)}
+        <span className="mx-1 text-faint">–</span>
+        {endClock(w.endIso)}
+      </p>
+
+      <p className="clip mt-2 flex items-center gap-2 text-sm text-muted">
+        <WeatherGlyph code={w.weatherCode} isDay={w.isDay} className="h-5 w-5 shrink-0" />
+        <span className="truncate">{strings.wmo[w.weatherCode] ?? ''}</span>
+      </p>
+
+      <div className="mt-4">
+        <IndexMeter
           score={w.score}
           label={strings.windows.scoreLabel}
           ariaLabel={strings.windows.scoreAria}
-          size={featured ? 138 : 108}
+          size={featured ? 'big' : 'inline'}
         />
       </div>
 
       {featured && (
-        <p className="font-display mt-4 text-lg leading-tight font-extrabold sm:text-xl">
-          {strings.verdicts[band]}
-        </p>
+        <p className="clip mt-4 text-lg leading-snug font-semibold sm:text-xl">{strings.verdicts[band]}</p>
       )}
 
-      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <div className="hairline mt-4 grid grid-cols-3 gap-x-4 gap-y-3 pt-4 sm:grid-cols-5">
         <Metric label={strings.windows.feelsLike} value={`${Math.round(w.apparent)}°`} />
         <Metric label={strings.windows.humidityLabel} value={`${Math.round(w.humidity)}%`} />
         <Metric label={strings.windows.rainChance} value={`${Math.round(w.precipProb)}%`} />

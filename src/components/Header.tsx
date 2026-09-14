@@ -12,50 +12,45 @@ type Props = {
 
 export function Header({ strings, lang, onLang, view, onView }: Props) {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-4 py-5">
-      <button
-        type="button"
-        className="group flex items-center gap-3 text-left"
-        onClick={() => onView('planner')}
-        aria-label="Runny"
-      >
-        <span className="grid h-12 w-12 place-items-center rounded-[0.9rem] border-[3px] border-ink bg-volt-400 shadow-pop-xs sm:h-14 sm:w-14">
-          <RunnerMark className="h-8 w-8 text-ink transition group-hover:scale-110 sm:h-9 sm:w-9" />
-        </span>
-        <span className="leading-none">
-          <span className="font-display block text-3xl font-black tracking-tight sm:text-4xl">runny</span>
-          <span className="mt-1 block text-[0.68rem] font-extrabold tracking-[0.16em] uppercase text-ink-soft">
-            {strings.brandTag}
-          </span>
+    <header className="flex items-center justify-between gap-4 py-5">
+      <button type="button" className="group flex min-w-0 items-center gap-3" onClick={() => onView('planner')}>
+        <RunnerMark className="h-9 w-9 shrink-0 text-volt transition-transform group-hover:translate-x-0.5 sm:h-10 sm:w-10" />
+        <span className="min-w-0 text-left">
+          <span className="h-display block text-2xl text-chalk sm:text-[1.7rem]">runny</span>
+          <span className="label block truncate">{strings.brandTag}</span>
         </span>
       </button>
 
-      <nav className="flex items-center gap-2" aria-label="Runny">
+      <nav className="flex shrink-0 items-center gap-3 sm:gap-5" aria-label="Runny">
         <button
           type="button"
           onClick={() => onView(view === 'faq' ? 'planner' : 'faq')}
-          className="btn-pop bg-white px-4 py-2 text-sm"
+          className="label transition-colors hover:text-volt"
         >
           {view === 'faq' ? strings.nav.plan : strings.nav.faq}
         </button>
 
-        <div
-          className="flex overflow-hidden rounded-full border-[3px] border-ink bg-white shadow-pop-xs"
-          role="group"
-          aria-label="Language"
-        >
-          {(['it', 'en'] as const).map((code) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => onLang(code)}
-              aria-pressed={lang === code}
-              className={`font-display px-3 py-2 text-sm font-black uppercase transition ${
-                lang === code ? 'bg-ink text-volt-400' : 'hover:bg-paper-dim'
-              }`}
-            >
-              {code}
-            </button>
+        <span className="h-4 w-px bg-line" aria-hidden="true" />
+
+        <div className="flex items-center gap-1.5" role="group" aria-label="Language">
+          {(['it', 'en'] as const).map((code, i) => (
+            <span key={code} className="flex items-center gap-1.5">
+              {i > 0 && (
+                <span className="font-mono text-[0.66rem] text-faint" aria-hidden="true">
+                  /
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => onLang(code)}
+                aria-pressed={lang === code}
+                className={`font-mono text-[0.66rem] tracking-[0.2em] uppercase transition-colors ${
+                  lang === code ? 'text-volt' : 'text-faint hover:text-chalk'
+                }`}
+              >
+                {code}
+              </button>
+            </span>
           ))}
         </div>
       </nav>

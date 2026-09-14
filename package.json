@@ -18,8 +18,9 @@
     "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
-    "@fontsource/archivo": "^5.2.5",
-    "@fontsource/manrope": "^5.2.5",
+    "@fontsource/anton": "^5.3.0",
+    "@fontsource/barlow": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "leaflet": "^1.9.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

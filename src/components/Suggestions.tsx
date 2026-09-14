@@ -2,6 +2,7 @@ import { DISTANCES } from '../lib/distances'
 import { duration, km, runSeconds } from '../lib/format'
 import type { Lang, Suggestion } from '../lib/types'
 import type { Strings } from '../lib/i18n'
+import { SectionHead } from './SectionHead'
 
 type Props = {
   strings: Strings
@@ -31,15 +32,12 @@ export function Suggestions({
   onPick,
 }: Props) {
   return (
-    <section className="card p-5 sm:p-7">
-      <span className="sticker bg-grape px-3 py-1 text-[0.62rem] text-white">{strings.suggest.kicker}</span>
-      <h2 className="font-display mt-3 text-2xl leading-none font-black sm:text-3xl">
-        {strings.suggest.title}
-      </h2>
-      <p className="mt-3 max-w-2xl text-sm font-semibold text-ink-soft">{strings.suggest.lead}</p>
+    <section className="panel tick tick-ice p-5 sm:p-7">
+      <SectionHead kicker={strings.suggest.kicker} title={strings.suggest.title} />
+      <p className="clip mt-4 max-w-2xl text-[0.95rem] leading-relaxed text-muted">{strings.suggest.lead}</p>
 
-      <div className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
-        {DISTANCES.map((d, i) => {
+      <div className="mt-6 grid grid-cols-2 gap-px bg-line-soft sm:grid-cols-3 lg:grid-cols-6">
+        {DISTANCES.map((d) => {
           const active = selectedKm === d.km
           return (
             <button
@@ -48,13 +46,14 @@ export function Suggestions({
               disabled={!hasStart || busy}
               onClick={() => onSelectKm(d.km)}
               aria-pressed={active}
-              className={`rounded-[1rem] border-[3px] border-ink px-3 py-3 text-left shadow-pop-xs transition disabled:opacity-45 ${
-                active ? 'bg-volt-400' : 'bg-white hover:bg-volt-200'
+              className={`min-w-0 px-3 py-4 text-left transition-colors disabled:opacity-35 ${
+                active ? 'bg-raised' : 'bg-pit hover:bg-raised'
               }`}
-              style={{ transform: `rotate(${i % 2 === 0 ? -1 : 1}deg)` }}
             >
-              <span className="font-display block text-xl leading-none font-black">{d.label[lang]}</span>
-              <span className="mt-1 block text-[0.62rem] leading-tight font-bold text-ink-soft">
+              <span className={`num block text-xl leading-none ${active ? 'text-volt' : 'text-chalk'}`}>
+                {d.label[lang]}
+              </span>
+              <span className="clip mt-2 block font-mono text-[0.6rem] leading-tight text-faint">
                 {d.note[lang]}
               </span>
             </button>
@@ -62,60 +61,45 @@ export function Suggestions({
         })}
       </div>
 
-      {!hasStart && <p className="mt-4 text-sm font-bold text-ink-soft">{strings.suggest.needStart}</p>}
-      {hasStart && busy && (
-        <p className="font-display mt-4 animate-pulse text-sm font-extrabold">{strings.suggest.building}</p>
-      )}
-      {hasStart && !busy && failed && (
-        <p className="mt-4 text-sm font-bold text-heat-600">{strings.suggest.failed}</p>
-      )}
+      {!hasStart && <p className="label mt-4">{strings.suggest.needStart}</p>}
+      {hasStart && busy && <p className="label animate-blink mt-4 text-volt">{strings.suggest.building}…</p>}
+      {hasStart && !busy && failed && <p className="clip mt-4 text-sm text-flare">{strings.suggest.failed}</p>}
 
       {suggestions.length > 0 && (
-        <div className="rail mt-5">
+        <div className="rail mt-6">
           {suggestions.map((s) => {
             const active = activeId === s.id
             return (
               <article
                 key={s.id}
-                className={`w-[240px] rounded-[1.1rem] border-[3px] border-ink p-4 shadow-pop-xs ${
-                  active ? 'bg-volt-300' : 'bg-white'
+                className={`w-[224px] border p-4 ${
+                  active ? 'border-volt bg-raised' : 'border-line bg-pit'
                 }`}
+                style={{ borderRadius: 5 }}
               >
-                <p className="font-display text-xs font-black tracking-[0.12em] uppercase text-ink-soft">
-                  {strings.suggest.loopName[s.bearingLabel]}
-                </p>
-                <p className="font-display mt-1 text-3xl leading-none font-black tabular-nums">
+                <p className="label">{strings.suggest.loopName[s.bearingLabel]}</p>
+                <p className="num mt-2 text-3xl leading-none">
                   {km(s.meters, lang)}
-                  <span className="ml-1 text-sm font-extrabold text-ink-soft">{strings.units.km}</span>
+                  <span className="ml-1 font-mono text-xs font-medium text-faint">{strings.units.km}</span>
                 </p>
-                <p className="mt-1 text-[0.68rem] font-bold text-ink-soft">
+                <p className="mt-1 font-mono text-[0.62rem] text-faint">
                   {strings.suggest.targetNote} {s.targetKm} {strings.units.km}
                 </p>
 
-                <dl className="mt-3 grid grid-cols-2 gap-2 text-center">
-                  <div className="rounded-[0.7rem] border-[2.5px] border-ink bg-paper px-2 py-1.5">
-                    <dt className="text-[0.55rem] font-extrabold uppercase text-ink-soft">
-                      {strings.route.duration}
-                    </dt>
-                    <dd className="font-display text-sm font-black tabular-nums">
-                      {duration(runSeconds(s.meters, pace), lang)}
-                    </dd>
+                <dl className="hairline mt-4 grid grid-cols-2 gap-3 pt-3">
+                  <div className="min-w-0">
+                    <dt className="label text-[0.58rem]">{strings.route.duration}</dt>
+                    <dd className="num mt-1 text-sm">{duration(runSeconds(s.meters, pace), lang)}</dd>
                   </div>
-                  <div className="rounded-[0.7rem] border-[2.5px] border-ink bg-paper px-2 py-1.5">
-                    <dt className="text-[0.55rem] font-extrabold uppercase text-ink-soft">
-                      {strings.route.ascent}
-                    </dt>
-                    <dd className="font-display text-sm font-black tabular-nums">
+                  <div className="min-w-0">
+                    <dt className="label text-[0.58rem]">{strings.route.ascent}</dt>
+                    <dd className="num mt-1 text-sm">
                       {s.ascent == null ? '—' : `${s.ascent} ${strings.units.m}`}
                     </dd>
                   </div>
                 </dl>
 
-                <button
-                  type="button"
-                  onClick={() => onPick(s)}
-                  className="btn-pop mt-3 w-full bg-cool-300 px-3 py-2 text-sm"
-                >
+                <button type="button" onClick={() => onPick(s)} className="btn btn-line mt-4 w-full px-3 py-2.5">
                   {strings.suggest.pick}
                 </button>
               </article>

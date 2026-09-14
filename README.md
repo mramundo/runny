@@ -1,6 +1,6 @@
 # runny
 
-**The weather-aware running planner.** Runny reads the forecast *along your whole route* — not just over your postcode — and tells you the coolest, freshest windows to head out.
+**Every run has a right hour.** Runny reads the air over the exact line you intend to run — every kilometre of it, hour by hour — and marks the windows worth lacing up for.
 
 Live: **https://mramundo.github.io/runny/**
 
@@ -10,11 +10,11 @@ The name is the joke: you use it so you *don't* end up runny.
 
 ## What it does
 
-1. **You give it a route.** Type a start and a finish, or tap *Use my location*. Leave *Finish where I started* on and Runny builds a loop instead.
+1. **You give it a route.** Type a start and a finish, or tap *Locate me*. Leave *Finish where I start* on and Runny closes the line into a loop instead.
 2. **Or you give it a distance.** Pick 5K, 10K, 15K, Half, 30K or Marathon and Runny generates three real running routes of roughly that length, fanned out in different directions from your start.
 3. **It samples the forecast along the line.** Up to eight points on the polyline, averaged hour by hour — a 15 km run can leave town, climb 200 m and cross a river, and the weather at the end is not the weather at the start.
-4. **It scores every hour** and shows you the windows that are long enough to fit the run at your pace, ranked by how kind the air will be.
-5. **It draws the route on a map** so you know where you are actually going.
+4. **It scores every hour** and shows the windows long enough to hold the whole run at your pace, ranked by how little the air will cost you.
+5. **It draws the line on a map** so you know exactly where you are going.
 
 ## The Runny Score
 
@@ -30,33 +30,17 @@ A 0–100 number per hour. Heat stress sets the ceiling; everything else chips a
 
 Temperature and dew point are blended with **the worse of the pair carrying most of the weight**, so a cool-but-soupy morning and a hot-but-dry afternoon are both correctly called hard. Rain, wind and UV act as multipliers rather than points, because they can spoil a run but never make one pleasant. Thunderstorms, heavy rain, extreme apparent heat, gales and UV ≥ 10 cap the score outright.
 
-Bands: **Perfect** ≥ 82 · **Great** ≥ 66 · **Doable** ≥ 48 · **Tough** ≥ 30 · **Skip it** below.
+Bands: **Prime** ≥ 82 · **Strong** ≥ 66 · **Workable** ≥ 48 · **Rough** ≥ 30 · **Stay in** below.
 
 ## Suggested loops
 
-Pick a distance and Runny drops four waypoints on a circle around your start, routes a pedestrian path through them, measures the real distance, then resizes the circle and tries again — up to three attempts — until the loop lands within 10% of the target. Three loops are built in different directions so you get a real choice. Every metre is a genuine walkable/runnable way from OpenStreetMap.
+Pick a distance and Runny drops four waypoints on a circle around your start, routes a pedestrian path through them, measures the real distance, then resizes the circle and tries again — up to three attempts — until the loop lands within 10% of the target. Three loops are built in different directions so you get a real choice. Every metre follows ways you can genuinely run.
 
 The preset distances are the staples of half and full marathon blocks: 5 and 10 km for tempo and intervals, 15 and 21.1 km for the long runs of a half build, 30 km as the classic marathon rehearsal, 42.2 km because someone always asks.
 
 ## Languages
 
 Italian inside Italy, English everywhere else. The app guesses instantly from the timezone and browser language, then refines it from the request's country. An explicit choice — the IT/EN switch, or `?lang=it` / `?lang=en` — always wins and is remembered.
-
-## Data sources
-
-| | |
-| --- | --- |
-| Forecast + elevation | [Open-Meteo](https://open-meteo.com/) |
-| Pedestrian routing | [Valhalla](https://valhalla.github.io/valhalla/) on the public OpenStreetMap instance |
-| Place search | [Photon](https://photon.komoot.io/) |
-| Reverse geocoding / country | [BigDataCloud](https://www.bigdatacloud.com/), [ipwho.is](https://ipwho.is/) |
-| Basemap | [CARTO](https://carto.com/) tiles over [OpenStreetMap](https://www.openstreetmap.org/copyright) data |
-
-No API keys, no accounts, no analytics, no tracking. Coordinates go to those services so they can answer; nothing is stored server-side. Your last route lives in your own browser.
-
-## Stack
-
-Vite 7 · React 19 · TypeScript (strict) · Tailwind CSS 4 · Leaflet · `vite-plugin-pwa` (Workbox). Installable, offline-capable, and rendered in one bundle with no server of its own.
 
 ## Development
 

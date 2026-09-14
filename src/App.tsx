@@ -3,11 +3,10 @@ import { Faq } from './components/Faq'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
 import { Hero } from './components/Hero'
+import { Lanes } from './components/Lanes'
 import { LoadingRunner } from './components/LoadingRunner'
-import { Marquee } from './components/Marquee'
 import { Planner } from './components/Planner'
 import { RouteCard } from './components/RouteCard'
-import { SpeedField } from './components/SpeedField'
 import { Suggestions } from './components/Suggestions'
 import { WindowsSection } from './components/WindowsSection'
 import { DEFAULT_PACE } from './lib/distances'
@@ -94,7 +93,7 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.lang = lang
-    document.title = lang === 'it' ? 'Runny — corri fresco' : 'Runny — run cool'
+    document.title = lang === 'it' ? 'Runny — trova la tua ora' : 'Runny — find your hour'
   }, [lang])
 
   useEffect(() => {
@@ -328,21 +327,14 @@ export default function App() {
     [activeSuggestion, suggestions],
   )
 
-  const marqueeItems =
-    lang === 'it'
-      ? ['corri fresco', 'meno sudore', 'aria dalla tua parte', 'punto di rugiada', 'fasce migliori']
-      : ['run cool', 'less sweat', 'air on your side', 'dew point matters', 'best windows']
-
   return (
     <>
-      <SpeedField />
-      <div className="mx-auto w-full max-w-5xl px-4 pb-4 sm:px-6">
+      <Lanes />
+      <div className="mx-auto w-full max-w-5xl px-5 sm:px-8">
         <Header strings={strings} lang={lang} onLang={chooseLang} view={view} onView={goView} />
       </div>
 
-      <Marquee items={marqueeItems} className="bg-volt-400" />
-
-      <main className="mx-auto w-full max-w-5xl px-4 sm:px-6">
+      <main className="mx-auto w-full max-w-5xl px-5 sm:px-8">
         {view === 'faq' ? (
           <Faq strings={strings} onBack={() => goView('planner')} />
         ) : (
@@ -356,16 +348,21 @@ export default function App() {
             {error && (
               <div
                 role="alert"
-                className="card-sm mb-5 flex flex-wrap items-center justify-between gap-3 border-heat-500 bg-heat-200 p-4"
+                className="mb-5 flex flex-wrap items-start justify-between gap-3 border-l-2 border-flare bg-pit px-4 py-3"
               >
-                <p className="text-sm font-extrabold">{error.message}</p>
-                <button type="button" className="btn-pop bg-white px-3 py-1.5 text-sm" onClick={() => setError(null)}>
-                  ×
+                <p className="clip text-sm font-semibold">{error.message}</p>
+                <button
+                  type="button"
+                  aria-label={strings.errors.retry}
+                  className="shrink-0 font-mono text-sm text-faint transition-colors hover:text-flare"
+                  onClick={() => setError(null)}
+                >
+                  ✕
                 </button>
               </div>
             )}
 
-            <div ref={plannerRef} className="space-y-5 scroll-mt-4">
+            <div ref={plannerRef} className="space-y-4 scroll-mt-6">
               <Planner
                 strings={strings}
                 lang={lang}
@@ -403,7 +400,7 @@ export default function App() {
               />
             </div>
 
-            <div ref={resultsRef} className="mt-5 space-y-5 scroll-mt-4">
+            <div ref={resultsRef} className="mt-4 space-y-4 scroll-mt-6">
               {working && !forecast && <LoadingRunner message={strings.planner.submitting} />}
 
               {plan && (

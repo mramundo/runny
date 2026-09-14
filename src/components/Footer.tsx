@@ -3,57 +3,39 @@ import { RunnerMark } from './RunnerMark'
 
 type Props = { strings: Strings; onView: (view: 'planner' | 'faq') => void }
 
-const REPO = 'https://github.com/mramundo/runny'
-
 export function Footer({ strings, onView }: Props) {
   return (
-    <footer className="mt-16 border-t-4 border-ink pt-8 pb-10">
-      <div className="grid gap-8 sm:grid-cols-[1.4fr_1fr]">
-        <div>
+    <footer className="hairline mt-20 pt-8 pb-12">
+      <div className="grid gap-8 sm:grid-cols-[1.5fr_1fr]">
+        <div className="min-w-0">
           <div className="flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-[0.8rem] border-[3px] border-ink bg-volt-400">
-              <RunnerMark className="h-7 w-7 text-ink" />
-            </span>
-            <span className="font-display text-2xl font-black">runny</span>
+            <RunnerMark className="h-7 w-7 shrink-0 text-volt" trail={false} />
+            <span className="h-display text-xl">runny</span>
           </div>
-          <p className="mt-4 max-w-md text-sm leading-relaxed font-semibold text-ink-soft">
-            {strings.footer.blurb}
-          </p>
+          <p className="clip mt-4 max-w-md text-sm leading-relaxed text-muted">{strings.footer.blurb}</p>
         </div>
 
-        <nav aria-label={strings.footer.sitemap}>
-          <h2 className="font-display text-xs font-black tracking-[0.16em] uppercase">
-            {strings.footer.sitemap}
-          </h2>
-          <ul className="mt-3 space-y-2 text-sm font-bold">
+        <nav aria-label={strings.footer.sitemap} className="min-w-0">
+          <h2 className="label">{strings.footer.sitemap}</h2>
+          <ul className="mt-3 space-y-2">
             <li>
-              <button type="button" className="hover:text-cool-600 underline decoration-[3px] underline-offset-4" onClick={() => onView('planner')}>
+              <button type="button" className="text-sm font-semibold text-chalk transition-colors hover:text-volt" onClick={() => onView('planner')}>
                 {strings.footer.linkPlan}
               </button>
             </li>
             <li>
-              <button type="button" className="hover:text-cool-600 underline decoration-[3px] underline-offset-4" onClick={() => onView('faq')}>
+              <button type="button" className="text-sm font-semibold text-chalk transition-colors hover:text-volt" onClick={() => onView('faq')}>
                 {strings.footer.linkFaq}
               </button>
-            </li>
-            <li>
-              <a
-                className="hover:text-cool-600 underline decoration-[3px] underline-offset-4"
-                href={REPO}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {strings.footer.linkRepo}
-              </a>
             </li>
           </ul>
         </nav>
       </div>
 
-      <p className="mt-8 text-xs font-semibold text-ink-soft">{strings.footer.data}</p>
-      <p className="mt-2 text-xs font-bold">
-        {strings.footer.copy} · <span className="text-ink-soft">{strings.footer.joke}</span>
-      </p>
+      <div className="hairline mt-8 flex flex-wrap items-center justify-between gap-2 pt-5">
+        <p className="label">{strings.footer.copy}</p>
+        <p className="label clip">{strings.footer.made}</p>
+      </div>
     </footer>
   )
 }

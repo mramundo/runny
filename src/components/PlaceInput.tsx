@@ -9,7 +9,7 @@ type Props = {
   onChange: (place: Place | null) => void
   lang: Lang
   near: LatLon | null
-  accent: 'volt' | 'cool'
+  accent: 'volt' | 'ice'
   disabled?: boolean
   onError?: (message: string) => void
   strings: { searching: string; noResults: string; clear: string }
@@ -18,8 +18,8 @@ type Props = {
 const DEBOUNCE_MS = 280
 
 /**
- * Type-ahead over Photon. Requests are debounced and the previous one is
- * aborted, so a fast typist never sees an older answer overwrite a newer one.
+ * Type-ahead over the place index. Requests are debounced and the previous one
+ * is aborted, so a fast typist never sees an older answer land on a newer one.
  */
 export function PlaceInput({
   label,
@@ -42,7 +42,8 @@ export function PlaceInput({
   const box = useRef<HTMLDivElement>(null)
   const dirty = useRef(false)
 
-  // A place chosen elsewhere (GPS, a suggestion) must show up in the field.
+  // A place chosen elsewhere (the locate button, a suggested line) has to show
+  // up in the field without the field fighting back.
   useEffect(() => {
     if (!dirty.current) setText(value ? value.name : '')
   }, [value])
@@ -110,18 +111,18 @@ export function PlaceInput({
     }
   }
 
-  const dot = accent === 'volt' ? 'bg-volt-400' : 'bg-cool-300'
-
   return (
-    <div className="relative" ref={box}>
-      <label className="font-display mb-1.5 flex items-center gap-2 text-xs font-black tracking-[0.14em] uppercase">
-        <span className={`inline-block h-3 w-3 rounded-full border-[2.5px] border-ink ${dot}`} />
+    <div className="relative min-w-0" ref={box}>
+      <label className="label flex items-center gap-2">
+        <span
+          className={`inline-block h-1.5 w-1.5 rounded-full ${accent === 'volt' ? 'bg-volt' : 'bg-ice'}`}
+        />
         {label}
       </label>
 
-      <div className="relative">
+      <div className="relative mt-1">
         <input
-          className="field pr-11"
+          className="field"
           type="text"
           value={text}
           placeholder={placeholder}
@@ -143,7 +144,7 @@ export function PlaceInput({
           <button
             type="button"
             aria-label={strings.clear}
-            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full border-[2.5px] border-ink bg-white px-2 text-sm leading-none font-black transition hover:bg-heat-200"
+            className="absolute top-1/2 right-0 -translate-y-1/2 px-2 font-mono text-sm text-faint transition-colors hover:text-flare"
             onClick={() => {
               dirty.current = false
               setText('')
@@ -152,40 +153,36 @@ export function PlaceInput({
               onChange(null)
             }}
           >
-            ×
+            ✕
           </button>
         )}
       </div>
 
-      {value && !open && (
-        <p className="mt-1 truncate pl-1 text-xs font-semibold text-ink-soft">{value.detail}</p>
+      {value && !open && value.detail && (
+        <p className="clip mt-1.5 line-clamp-1 font-mono text-[0.68rem] text-faint">{value.detail}</p>
       )}
 
       {open && (
         <ul
           id={listId}
           role="listbox"
-          className="card-sm absolute z-30 mt-2 max-h-72 w-full overflow-auto p-1.5"
+          className="panel-raised absolute z-30 mt-1 max-h-72 w-full overflow-auto"
         >
-          {busy && results.length === 0 && (
-            <li className="px-3 py-2 text-sm font-bold text-ink-soft">{strings.searching}</li>
-          )}
-          {!busy && results.length === 0 && (
-            <li className="px-3 py-2 text-sm font-bold text-ink-soft">{strings.noResults}</li>
-          )}
+          {busy && results.length === 0 && <li className="label px-3 py-3">{strings.searching}…</li>}
+          {!busy && results.length === 0 && <li className="label px-3 py-3">{strings.noResults}</li>}
           {results.map((r, i) => (
-            <li key={r.id} role="option" aria-selected={i === active}>
+            <li key={r.id} role="option" aria-selected={i === active} className="border-b border-line-soft last:border-0">
               <button
                 type="button"
-                className={`w-full rounded-[0.7rem] px-3 py-2 text-left transition ${
-                  i === active ? 'bg-volt-300' : 'hover:bg-paper-dim'
+                className={`w-full px-3 py-2.5 text-left transition-colors ${
+                  i === active ? 'bg-panel text-volt' : 'hover:bg-panel'
                 }`}
                 onMouseEnter={() => setActive(i)}
                 onClick={() => pick(r)}
               >
-                <span className="block truncate font-extrabold">{r.name}</span>
+                <span className="clip block truncate text-sm font-semibold">{r.name}</span>
                 {r.detail && (
-                  <span className="block truncate text-xs font-semibold text-ink-soft">{r.detail}</span>
+                  <span className="clip block truncate font-mono text-[0.66rem] text-faint">{r.detail}</span>
                 )}
               </button>
             </li>

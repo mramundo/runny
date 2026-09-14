@@ -5,32 +5,32 @@ import type { RoutePlan } from '../lib/types'
 
 type Props = {
   plan: RoutePlan | null
-  /** Faint previews drawn under the active route */
+  /** Faint previews drawn under the active line */
   ghosts?: [number, number][][]
-  startLabel: string
-  endLabel: string
   attribution: string
   ariaLabel: string
   className?: string
 }
 
-const TILES = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+// Plain raster tiles, no key and no account. The night look comes from a CSS
+// filter on the tile pane rather than from a paid dark style.
+const TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 
-function pin(kind: 'start' | 'end', label: string) {
+function dot(kind: 'start' | 'end') {
   return L.divIcon({
     className: '',
-    html: `<div class="pin pin-${kind}">${label}</div>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    html: `<div class="dot dot-${kind}"></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
   })
 }
 
 /**
  * Leaflet, driven imperatively. React owns *what* is on the map; Leaflet keeps
  * owning the DOM inside the container, which is the only way the two coexist
- * without the map being torn down on every state change.
+ * without the map being rebuilt on every state change.
  */
-export function MapView({ plan, ghosts, startLabel, endLabel, attribution, ariaLabel, className }: Props) {
+export function MapView({ plan, ghosts, attribution, ariaLabel, className }: Props) {
   const host = useRef<HTMLDivElement>(null)
   const map = useRef<L.Map | null>(null)
   const layer = useRef<L.LayerGroup | null>(null)
@@ -45,16 +45,13 @@ export function MapView({ plan, ghosts, startLabel, endLabel, attribution, ariaL
       scrollWheelZoom: false,
     }).setView([41.9028, 12.4964], 12)
 
-    L.tileLayer(TILES, {
-      maxZoom: 19,
-      subdomains: 'abcd',
-      attribution,
-    }).addTo(m)
+    L.tileLayer(TILES, { maxZoom: 19, attribution }).addTo(m)
+    m.attributionControl.setPrefix('')
 
     layer.current = L.layerGroup().addTo(m)
     map.current = m
 
-    // The container is laid out by CSS after mount; Leaflet needs telling.
+    // The container is sized by CSS after mount; Leaflet needs telling.
     const t = setTimeout(() => m.invalidateSize(), 80)
     return () => {
       clearTimeout(t)
@@ -73,49 +70,48 @@ export function MapView({ plan, ghosts, startLabel, endLabel, attribution, ariaL
     for (const ghost of ghosts ?? []) {
       if (ghost.length > 1) {
         L.polyline(ghost, {
-          color: '#12161c',
-          weight: 4,
-          opacity: 0.18,
-          dashArray: '2 10',
+          color: '#8794a2',
+          weight: 2,
+          opacity: 0.35,
+          dashArray: '2 8',
           lineCap: 'round',
         }).addTo(group)
       }
     }
 
     if (!plan || plan.points.length < 2) {
-      if ((ghosts?.length ?? 0) === 0) return
       const all = (ghosts ?? []).flat()
-      if (all.length > 1) m.fitBounds(boundsOf(all), { padding: [28, 28] })
+      if (all.length > 1) m.fitBounds(boundsOf(all), { padding: [26, 26] })
       return
     }
 
-    // Ink casing under a volt line: the same border-plus-fill rule as the cards.
-    L.polyline(plan.points, { color: '#12161c', weight: 11, lineCap: 'round', lineJoin: 'round' }).addTo(group)
+    // A dark casing keeps the line readable over pale streets and parks.
+    L.polyline(plan.points, { color: '#07080a', weight: 9, opacity: 0.85, lineCap: 'round', lineJoin: 'round' }).addTo(group)
     L.polyline(plan.points, {
-      color: '#c6f135',
-      weight: 6,
+      color: '#d8ff36',
+      weight: 4,
       lineCap: 'round',
       lineJoin: 'round',
-      dashArray: '26 14',
+      dashArray: '22 12',
       className: 'route-line',
     }).addTo(group)
 
     const first = plan.points[0]
     const last = plan.points[plan.points.length - 1]
-    L.marker(first, { icon: pin('start', startLabel), keyboard: false, title: startLabel }).addTo(group)
+    L.marker(first, { icon: dot('start'), keyboard: false, interactive: false }).addTo(group)
     if (plan.kind !== 'loop') {
-      L.marker(last, { icon: pin('end', endLabel), keyboard: false, title: endLabel }).addTo(group)
+      L.marker(last, { icon: dot('end'), keyboard: false, interactive: false }).addTo(group)
     }
 
-    m.fitBounds(boundsOf(plan.points), { padding: [30, 30] })
-  }, [plan, ghosts, startLabel, endLabel])
+    m.fitBounds(boundsOf(plan.points), { padding: [28, 28] })
+  }, [plan, ghosts])
 
   return (
     <div
       ref={host}
       role="application"
       aria-label={ariaLabel}
-      className={`h-[320px] w-full overflow-hidden rounded-[1.1rem] border-[3px] border-ink sm:h-[420px] ${className ?? ''}`}
+      className={`h-[300px] w-full sm:h-[440px] ${className ?? ''}`}
     />
   )
 }

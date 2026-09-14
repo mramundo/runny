@@ -1,263 +1,365 @@
-@import '@fontsource/archivo/latin-600.css';
-@import '@fontsource/archivo/latin-700.css';
-@import '@fontsource/archivo/latin-800.css';
-@import '@fontsource/archivo/latin-900.css';
-@import '@fontsource/manrope/latin-400.css';
-@import '@fontsource/manrope/latin-600.css';
-@import '@fontsource/manrope/latin-700.css';
-@import '@fontsource/manrope/latin-800.css';
+@import '@fontsource/anton/latin-400.css';
+@import '@fontsource/barlow/latin-400.css';
+@import '@fontsource/barlow/latin-500.css';
+@import '@fontsource/barlow/latin-600.css';
+@import '@fontsource/barlow/latin-700.css';
+@import '@fontsource/jetbrains-mono/latin-400.css';
+@import '@fontsource/jetbrains-mono/latin-500.css';
+@import '@fontsource/jetbrains-mono/latin-700.css';
 @import 'leaflet/dist/leaflet.css';
 @import 'tailwindcss';
 
 @theme {
-  --font-display: 'Archivo', 'Manrope', system-ui, sans-serif;
-  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-display: 'Anton', 'Barlow', system-ui, sans-serif;
+  --font-sans: 'Barlow', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  /* Ink: every border, every headline */
-  --color-ink: #12161c;
-  --color-ink-soft: #4a5462;
+  /* Night surfaces, from the page up to the raised panels */
+  --color-void: #07080a;
+  --color-pit: #0c0e11;
+  --color-panel: #12151a;
+  --color-raised: #181d23;
 
-  /* Paper */
-  --color-paper: #f4f3ec;
-  --color-paper-dim: #e7e5d9;
+  /* Hairlines do all the dividing here — nothing is outlined in thick ink */
+  --color-line: #262d36;
+  --color-line-soft: #1a1f26;
 
-  /* Volt — the brand's shout */
-  --color-volt-200: #eafab0;
-  --color-volt-300: #ddf578;
-  --color-volt-400: #c6f135;
-  --color-volt-500: #aade1b;
-  --color-volt-600: #86ad12;
+  --color-chalk: #eef3f7;
+  --color-muted: #8794a2;
+  --color-faint: #5c6874;
 
-  /* Cool — freshness, water, early mornings */
-  --color-cool-100: #d7f7fb;
-  --color-cool-200: #a5eef6;
-  --color-cool-300: #5fdfee;
-  --color-cool-400: #23c9e0;
-  --color-cool-500: #12a3bc;
-  --color-cool-600: #0d7d92;
+  /* Volt is the one shout in the palette */
+  --color-volt: #d8ff36;
+  --color-volt-dim: #9fbf1f;
+  --color-ice: #5ad6f0;
+  --color-flare: #ff6a2b;
 
-  /* Heat — the thing Runny helps you dodge */
-  --color-heat-200: #ffd6cd;
-  --color-heat-400: #ff8a3d;
-  --color-heat-500: #ff4b3e;
-  --color-heat-600: #d92f27;
-
-  --color-amber-pop: #ffc93c;
-  --color-mint-pop: #23d6a0;
-  --color-grape: #8b6bff;
-
-  /* Runny Score ramp — red, orange, yellow, lime, teal */
-  --color-band-bad: #ff4b3e;
-  --color-band-poor: #ff8a3d;
-  --color-band-ok: #ffc93c;
-  --color-band-great: #a9e634;
-  --color-band-perfect: #23d6a0;
-
-  --shadow-pop-xs: 3px 3px 0 0 var(--color-ink);
-  --shadow-pop-sm: 5px 5px 0 0 var(--color-ink);
-  --shadow-pop: 8px 8px 0 0 var(--color-ink);
-  --shadow-pop-lg: 12px 12px 0 0 var(--color-ink);
+  /* Index ramp, tuned for a dark ground */
+  --color-idx-bad: #ff4d5e;
+  --color-idx-poor: #ff8a3d;
+  --color-idx-ok: #ffd23f;
+  --color-idx-great: #b8f03c;
+  --color-idx-prime: #2ee6a8;
 }
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
   font-family: var(--font-sans);
-  color: var(--color-ink);
-  /* Tilted stickers and offset shadows must never scroll the page sideways. */
+  color: var(--color-chalk);
+  background-color: var(--color-void);
   overflow-x: clip;
-  background-color: var(--color-paper);
-  background-image:
-    radial-gradient(1100px 520px at 88% -120px, rgba(198, 241, 53, 0.5), transparent 64%),
-    radial-gradient(900px 460px at -8% 60px, rgba(35, 201, 224, 0.28), transparent 62%),
-    radial-gradient(700px 700px at 50% 120%, rgba(139, 107, 255, 0.14), transparent 60%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
+  font-size: 16px;
+}
+
+/* Two slow pools of light, fixed behind everything */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(760px 520px at 78% -8%, rgba(216, 255, 54, 0.11), transparent 68%),
+    radial-gradient(680px 620px at -6% 18%, rgba(90, 214, 240, 0.08), transparent 66%),
+    radial-gradient(900px 700px at 50% 112%, rgba(255, 106, 43, 0.06), transparent 62%);
 }
 
 ::selection {
-  background: var(--color-volt-400);
-  color: var(--color-ink);
+  background: var(--color-volt);
+  color: var(--color-void);
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-cool-500);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-volt);
+  outline-offset: 2px;
 }
 
-/* ============ Surfaces ============ */
+/* ============ Type ============ */
 
-.card {
-  background: #fff;
-  border: 4px solid var(--color-ink);
-  border-radius: 1.5rem;
-  box-shadow: var(--shadow-pop);
-}
-
-.card-sm {
-  background: #fff;
-  border: 3px solid var(--color-ink);
-  border-radius: 1.1rem;
-  box-shadow: var(--shadow-pop-sm);
-}
-
-.card-flat {
-  background: #fff;
-  border: 3px solid var(--color-ink);
-  border-radius: 1.1rem;
-}
-
-/* Tilted sticker labels — section kickers, band chips, distance badges */
-.sticker {
-  display: inline-block;
+.h-display {
   font-family: var(--font-display);
-  font-weight: 900;
-  letter-spacing: 0.06em;
+  font-weight: 400;
   text-transform: uppercase;
-  border: 3px solid var(--color-ink);
-  border-radius: 0.7rem;
-  box-shadow: var(--shadow-pop-xs);
-  transform: rotate(var(--tilt, -2.5deg));
+  letter-spacing: -0.01em;
+  line-height: 0.88;
 }
 
-.chip {
-  border: 3px solid var(--color-ink);
-  border-radius: 9999px;
-  box-shadow: var(--shadow-pop-xs);
-  font-weight: 800;
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* ============ Surfaces ============
+   One hairline, one dark fill, square-ish corners. No shadow anywhere:
+   depth comes from the value of the fill, not from a drop. */
+
+.panel {
+  position: relative;
+  background: linear-gradient(180deg, var(--color-panel), var(--color-pit));
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+}
+
+.panel-flat {
+  background: var(--color-pit);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 5px;
+}
+
+.panel-raised {
+  background: var(--color-raised);
+  border: 1px solid var(--color-line);
+  border-radius: 5px;
+}
+
+/* A short accent bar that hangs off the top-left of a section panel */
+.tick::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 22px;
+  width: 56px;
+  height: 2px;
+  background: var(--color-volt);
+}
+.tick-ice::before {
+  background: var(--color-ice);
+}
+.tick-flare::before {
+  background: var(--color-flare);
+}
+
+.hairline {
+  border-top: 1px solid var(--color-line-soft);
 }
 
 /* ============ Controls ============ */
 
-.btn-pop {
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  border: 3px solid var(--color-ink);
-  border-radius: 9999px;
-  box-shadow: var(--shadow-pop-sm);
-  font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: 0.01em;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  border: 1px solid transparent;
   cursor: pointer;
   transition:
-    transform 120ms ease,
-    box-shadow 120ms ease,
-    background-color 120ms ease;
-}
-.btn-pop:hover:not(:disabled) {
-  transform: translate(-2px, -2px);
-  box-shadow: 7px 7px 0 0 var(--color-ink);
-}
-.btn-pop:active:not(:disabled) {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 0 var(--color-ink);
-}
-.btn-pop:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-  box-shadow: var(--shadow-pop-xs);
+    background-color 140ms ease,
+    color 140ms ease,
+    border-color 140ms ease,
+    opacity 140ms ease;
 }
 
+.btn-solid {
+  background: var(--color-volt);
+  color: var(--color-void);
+}
+.btn-solid:hover:not(:disabled) {
+  background: #e7ff6a;
+}
+
+.btn-line {
+  background: transparent;
+  color: var(--color-chalk);
+  border-color: var(--color-line);
+}
+.btn-line:hover:not(:disabled) {
+  border-color: var(--color-volt);
+  color: var(--color-volt);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Fields are underlines, not boxes */
 .field {
   width: 100%;
-  border: 3px solid var(--color-ink);
-  border-radius: 1rem;
-  background: #fff;
-  font-weight: 700;
-  padding: 0.85rem 1rem;
-  box-shadow: var(--shadow-pop-xs);
-  transition: box-shadow 120ms ease;
+  background: transparent;
+  color: var(--color-chalk);
+  border: 0;
+  border-bottom: 1px solid var(--color-line);
+  border-radius: 0;
+  padding: 0.6rem 2rem 0.6rem 0;
+  font-size: 1.02rem;
+  font-weight: 600;
+  transition: border-color 140ms ease;
 }
 .field::placeholder {
-  color: var(--color-ink-soft);
-  font-weight: 600;
+  color: var(--color-faint);
+  font-weight: 500;
 }
 .field:focus {
   outline: none;
-  box-shadow: 5px 5px 0 0 var(--color-cool-400);
+  border-bottom-color: var(--color-volt);
 }
 
-/* Wavy underline for the big section titles */
-.squiggle {
+/* Switch: a hairline track with a volt knob */
+.switch {
   position: relative;
-  padding-bottom: 0.35em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 10'%3E%3Cpath d='M0 5 Q 7.5 0 15 5 T 30 5 T 45 5 T 60 5' fill='none' stroke='%2323c9e0' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-size: 3.4rem 0.6rem;
-  background-position: left bottom;
+  display: inline-block;
+  width: 38px;
+  height: 20px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: var(--color-pit);
+  transition: border-color 140ms ease;
+  flex-shrink: 0;
 }
-.squiggle-volt {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 10'%3E%3Cpath d='M0 5 Q 7.5 0 15 5 T 30 5 T 45 5 T 60 5' fill='none' stroke='%23aade1b' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--color-faint);
+  transition:
+    transform 160ms cubic-bezier(0.3, 1, 0.4, 1),
+    background-color 140ms ease;
+}
+.switch[data-on='true'] {
+  border-color: var(--color-volt-dim);
+}
+.switch[data-on='true']::after {
+  transform: translateX(18px);
+  background: var(--color-volt);
+}
+
+/* Range slider, restyled end to end so it matches the hairline language */
+.range {
+  width: 100%;
+  appearance: none;
+  background: transparent;
+  height: 22px;
+  cursor: pointer;
+}
+.range::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--color-line);
+}
+.range::-moz-range-track {
+  height: 2px;
+  background: var(--color-line);
+}
+.range::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -6px;
+  border-radius: 2px;
+  background: var(--color-volt);
+}
+.range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 2px;
+  background: var(--color-volt);
 }
 
 /* ============ Motion ============ */
 
-@keyframes float-y {
-  0%,
-  100% {
-    transform: translateY(0) rotate(var(--spin, 0deg));
-  }
-  50% {
-    transform: translateY(-10px) rotate(var(--spin, 0deg));
-  }
+/* Lane sweep: thin verticals with a highlight travelling down them, the way
+   a timing board refreshes. Atmosphere only, and switched off for reduced
+   motion along with everything else. */
+.lanes {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+  opacity: 0.55;
 }
-.animate-float {
-  animation: float-y 5.5s ease-in-out infinite;
+.lane {
+  position: absolute;
+  top: -20%;
+  width: 1px;
+  height: 140%;
+  background: linear-gradient(180deg, transparent, var(--color-line) 12%, var(--color-line) 88%, transparent);
+}
+.lane span {
+  position: absolute;
+  left: -1px;
+  width: 3px;
+  height: 120px;
+  background: linear-gradient(180deg, transparent, var(--c, var(--color-volt)), transparent);
+  filter: blur(0.5px);
+  animation: lane-run var(--d, 9s) linear var(--delay, 0s) infinite;
+  opacity: 0.5;
+}
+@keyframes lane-run {
+  from {
+    transform: translateY(-140px);
+  }
+  to {
+    transform: translateY(100vh);
+  }
 }
 
-@keyframes sway {
-  0%,
-  100% {
-    transform: rotate(-3deg);
-  }
-  50% {
-    transform: rotate(3deg);
-  }
-}
-.animate-sway {
-  animation: sway 5s ease-in-out infinite;
-}
-
-/* Legs cycling — the loading runner and the logo on hover */
 @keyframes stride {
   0%,
   100% {
-    transform: translateY(0) rotate(-2deg);
-  }
-  25% {
-    transform: translateY(-6px) rotate(1deg);
+    transform: translateY(0) rotate(-1.5deg);
   }
   50% {
-    transform: translateY(0) rotate(2deg);
-  }
-  75% {
-    transform: translateY(-4px) rotate(-1deg);
+    transform: translateY(-4px) rotate(1.5deg);
   }
 }
 .animate-stride {
-  animation: stride 0.75s ease-in-out infinite;
+  animation: stride 0.7s ease-in-out infinite;
 }
 
-/* Speed lines whipping past */
-@keyframes whip {
-  from {
-    transform: translateX(-30%);
-    opacity: 0;
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
   }
-  15%,
-  80% {
-    opacity: var(--o, 0.5);
+  50% {
+    opacity: 0.25;
+  }
+}
+.animate-blink {
+  animation: blink 1.4s ease-in-out infinite;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
   to {
-    transform: translateX(130%);
-    opacity: 0;
+    opacity: 1;
+    transform: none;
   }
+}
+.animate-rise {
+  animation: rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes dash-run {
@@ -266,10 +368,10 @@ body {
   }
 }
 .route-line {
-  animation: dash-run 22s linear infinite;
+  animation: dash-run 26s linear infinite;
 }
 
-@keyframes marquee-x {
+@keyframes ticker {
   from {
     transform: translateX(0);
   }
@@ -277,62 +379,14 @@ body {
     transform: translateX(-50%);
   }
 }
-.marquee-track {
+.ticker-track {
   display: flex;
   width: max-content;
-  animation: marquee-x var(--speed, 26s) linear infinite;
-}
-
-@keyframes pop-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.animate-pop-in {
-  animation: pop-in 380ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
-}
-
-@keyframes score-fill {
-  from {
-    stroke-dashoffset: var(--dash-from, 999);
-  }
-}
-.score-arc {
-  animation: score-fill 900ms cubic-bezier(0.3, 1.1, 0.4, 1) both;
-}
-
-/* ============ Background speed field ============
-   Diagonal motion streaks drifting behind the content: atmosphere only,
-   never over a word, its own layer so it cannot repaint the page. */
-.speed-field {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-  transform: translateZ(0);
-  contain: strict;
-}
-.speed-streak {
-  position: absolute;
-  left: 0;
-  height: var(--h, 8px);
-  width: var(--w, 200px);
-  top: var(--y, 10%);
-  border-radius: 999px;
-  background: var(--c, var(--color-ink));
-  opacity: 0;
-  animation: whip var(--d, 14s) linear var(--delay, 0s) infinite;
-  will-change: transform;
+  animation: ticker var(--speed, 40s) linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .speed-field {
+  .lanes {
     display: none;
   }
   *,
@@ -345,82 +399,87 @@ body {
   }
 }
 
-/* ============ Leaflet, wearing Runny's clothes ============ */
+/* ============ Map ============
+   The basemap is a plain light raster; the filter below turns it into a
+   night chart so the line and the page agree with each other. */
 
 .leaflet-container {
   font-family: var(--font-sans);
-  background: #e9e7dc;
-  border-radius: 1rem;
-  z-index: 0;
+  background: #0c0e11;
 }
-.leaflet-bar,
-.leaflet-control-zoom a,
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
-  border: 2.5px solid var(--color-ink) !important;
-  box-shadow: var(--shadow-pop-xs) !important;
-}
-.leaflet-control-zoom a {
-  border-radius: 0.6rem !important;
-  font-weight: 900;
-  color: var(--color-ink) !important;
-  background: #fff;
+.leaflet-tile-pane {
+  filter: invert(0.94) hue-rotate(180deg) brightness(0.92) contrast(0.86) saturate(0.35);
 }
 .leaflet-bar {
-  border: none !important;
+  border: 0 !important;
   box-shadow: none !important;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
-.leaflet-popup-content-wrapper {
-  border-radius: 0.9rem !important;
-  font-weight: 700;
+.leaflet-control-zoom a {
+  background: rgba(12, 14, 17, 0.92) !important;
+  border: 1px solid var(--color-line) !important;
+  border-radius: 3px !important;
+  color: var(--color-chalk) !important;
+  font-weight: 500;
+}
+.leaflet-control-zoom a:hover {
+  border-color: var(--color-volt) !important;
+  color: var(--color-volt) !important;
 }
 .leaflet-control-attribution {
-  background: rgba(255, 255, 255, 0.88) !important;
-  border-top: 2px solid var(--color-ink);
-  border-left: 2px solid var(--color-ink);
-  border-top-left-radius: 0.6rem;
-  font-size: 10px;
-  font-weight: 600;
+  background: rgba(7, 8, 10, 0.72) !important;
+  color: var(--color-faint) !important;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  padding: 2px 6px !important;
 }
 .leaflet-control-attribution a {
-  color: var(--color-cool-600);
+  color: var(--color-faint) !important;
 }
 
-/* Route marker pins are plain divs so they can carry the app's own borders */
-.pin {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 9999px;
-  border: 3px solid var(--color-ink);
-  box-shadow: var(--shadow-pop-xs);
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 13px;
-  color: var(--color-ink);
+/* Endpoint markers: a ring, not a balloon */
+.dot {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(7, 8, 10, 0.9);
 }
-.pin-start {
-  background: var(--color-volt-400);
+.dot-start {
+  background: var(--color-volt);
 }
-.pin-end {
-  background: var(--color-cool-300);
+.dot-end {
+  background: var(--color-ice);
 }
 
-/* Horizontal scrollers (hour strip, suggestion rail) keep their shadows */
+/* ============ Rails ============
+   Horizontal scrollers that must never widen the page. */
 .rail {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 0.35rem 0.35rem 1rem;
-  margin: -0.35rem -0.35rem -0.4rem;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-bottom: 0.75rem;
   scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
 }
 .rail > * {
   scroll-snap-align: start;
   flex: 0 0 auto;
+}
+.rail::-webkit-scrollbar {
+  height: 6px;
+}
+.rail::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 999px;
+}
+
+/* Long place names and forecast words must clip, never push a panel wide */
+.clip {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
